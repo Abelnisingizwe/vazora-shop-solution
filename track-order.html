@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Track Your Order | VAZORA SHOP SOLUTION
+    </title>
+
+
+    <style>
+/* =====================================================
+   VAZORA SHOP SOLUTION
+   PROFESSIONAL ORDER TRACKING DESIGN
+   Brand: EVERYTHING YOU NEED — WE PROVIDE THE SOLUTION
+===================================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+
+    /* VAZORA BRAND COLORS */
+
+    --navy:#0B1F3A;
+    --navy-2:#132A4D;
+    --navy-dark:#061326;
+
+    --green:#2E8B34;
+    --green-2:#3CA836;
+    --green-light:#8FD14F;
+
+    --white:#FFFFFF;
+    --off-white:#F8F9FA;
+
+    --text:#172033;
+    --muted:#667085;
+
+    --border:#E5E7EB;
+
+    --shadow:
+        0 20px 60px rgba(11,31,58,.12);
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body{
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color:var(--text);
+
+    min-height:100vh;
+
+    overflow-x:hidden;
+
+    /*
+     * Professional VAZORA background
+     */
+
+    background:
+
+        radial-gradient(
+            circle at 10% 15%,
+            rgba(60,168,54,.12),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(11,31,58,.13),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 80% 85%,
+            rgba(143,209,79,.10),
+            transparent 28%
+        ),
+
+        linear-gradient(
+            135deg,
+            #FFFFFF 0%,
+            #F8F9FA 45%,
+            #EEF3F0 100%
+        );
+
+    position:relative;
+}
+
+
+/*
+ * Very subtle background pattern
+ */
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    pointer-events:none;
+
+    opacity:.35;
+
+    background-image:
+
+        linear-gradient(
+            rgba(11,31,58,.025) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(11,31,58,.025) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        45px 45px;
+
+    z-index:-1;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header{
+
+    background:
+
+        linear-gradient(
+            120deg,
+            var(--navy-dark),
+            var(--navy),
+            var(--navy-2)
+        );
+
+    color:var(--white);
+
+    padding:
+        18px 5%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 8px 30px
+        rgba(6,19,38,.20);
+}
+
+
+/*
+ * Green light effect inside header
+ */
+
+header::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:220px;
+
+    height:220px;
+
+    right:-100px;
+
+    top:-130px;
+
+    border-radius:50%;
+
+    background:
+        rgba(60,168,54,.20);
+
+    filter:blur(20px);
+
+    pointer-events:none;
+}
+
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.logo{
+
+    color:var(--white);
+
+    font-size:27px;
+
+    font-weight:900;
+
+    letter-spacing:2px;
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+/*
+ * Brand accent
+ */
+
+.logo::after{
+
+    content:"";
+
+    display:block;
+
+    width:35px;
+
+    height:3px;
+
+    margin-top:5px;
+
+    border-radius:5px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--green),
+            var(--green-light)
+        );
+}
+
+
+/* =====================================================
+   BACK BUTTON
+===================================================== */
+
+.back-link{
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:
+        10px 20px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.25);
+
+    border-radius:10px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    backdrop-filter:
+        blur(10px);
+
+    font-size:14px;
+
+    font-weight:700;
+
+    transition:
+        .3s ease;
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+.back-link:hover{
+
+    background:
+        var(--green);
+
+    border-color:
+        var(--green);
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(46,139,52,.30);
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.tracking-page{
+
+    width:100%;
+
+    max-width:900px;
+
+    margin:
+        65px auto;
+
+    padding:
+        0 20px;
+}
+
+
+/* =====================================================
+   MAIN CARD
+===================================================== */
+
+.tracking-card{
+
+    background:
+        rgba(255,255,255,.94);
+
+    border:
+        1px solid
+        rgba(11,31,58,.07);
+
+    border-radius:24px;
+
+    padding:42px;
+
+    box-shadow:
+        var(--shadow);
+
+    backdrop-filter:
+        blur(15px);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+
+/*
+ * Green decorative line
+ */
+
+.tracking-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    top:0;
+
+    width:100%;
+
+    height:5px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            var(--navy),
+            var(--green),
+            var(--green-light),
+            var(--green),
+            var(--navy)
+        );
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.tracking-title{
+
+    text-align:center;
+
+    margin-bottom:10px;
+}
+
+
+.tracking-title h1{
+
+    color:var(--navy);
+
+    font-size:36px;
+
+    font-weight:900;
+
+    letter-spacing:-.5px;
+
+    margin-bottom:12px;
+}
+
+
+.tracking-title h1::after{
+
+    content:"";
+
+    display:block;
+
+    width:55px;
+
+    height:4px;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--green),
+            var(--green-light)
+        );
+
+    margin:
+        12px auto 0;
+}
+
+
+.tracking-title p{
+
+    color:var(--muted);
+
+    max-width:600px;
+
+    margin:
+        15px auto 0;
+
+    font-size:15px;
+
+    line-height:1.7;
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+#trackOrderForm{
+
+    margin-top:32px;
+}
+
+
+.form-group{
+
+    margin-bottom:18px;
+}
+
+
+.form-group label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    color:var(--navy);
+
+    font-size:14px;
+
+    font-weight:800;
+}
+
+
+.form-group input{
+
+    width:100%;
+
+    padding:
+        16px 17px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:12px;
+
+    background:
+        #FFFFFF;
+
+    color:var(--text);
+
+    font-size:16px;
+
+    outline:none;
+
+    transition:
+        .3s ease;
+}
+
+
+.form-group input::placeholder{
+
+    color:#98A2B3;
+}
+
+
+.form-group input:focus{
+
+    border-color:
+        var(--green);
+
+    box-shadow:
+
+        0 0 0 4px
+        rgba(46,139,52,.10);
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =====================================================
+   TRACK BUTTON
+===================================================== */
+
+#trackOrderBtn{
+
+    width:100%;
+
+    border:none;
+
+    padding:
+        16px 20px;
+
+    border-radius:12px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--green),
+            var(--green-2)
+        );
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:900;
+
+    letter-spacing:.2px;
+
+    cursor:pointer;
+
+    transition:
+        .3s ease;
+
+    box-shadow:
+        0 8px 22px
+        rgba(46,139,52,.20);
+}
+
+
+#trackOrderBtn:hover{
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 12px 28px
+        rgba(46,139,52,.30);
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--green-2),
+            var(--green)
+        );
+}
+
+
+#trackOrderBtn:active{
+
+    transform:
+        translateY(0);
+}
+
+
+/* =====================================================
+   RESULT
+===================================================== */
+
+#trackingResult{
+
+    margin-top:32px;
+}
+
+
+/* =====================================================
+   ORDER CARD
+===================================================== */
+
+.tracking-order-card{
+
+    background:
+        #FFFFFF;
+
+    border:
+        1px solid
+        rgba(11,31,58,.08);
+
+    border-radius:18px;
+
+    padding:24px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(11,31,58,.08);
+
+    animation:
+        resultAppear .4s ease;
+}
+
+
+@keyframes resultAppear{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateY(12px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* =====================================================
+   ORDER TOP
+===================================================== */
+
+.order-top{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+    margin-bottom:20px;
+}
+
+
+.order-id-label{
+
+    color:var(--muted);
+
+    font-size:12px;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .8px;
+
+    font-weight:700;
+}
+
+
+.order-id{
+
+    color:var(--navy);
+
+    font-size:15px;
+
+    font-weight:900;
+
+    margin-top:5px;
+
+    word-break:break-all;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.order-status{
+
+    padding:
+        9px 16px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    font-weight:900;
+
+    border:
+        1px solid transparent;
+}
+
+
+.order-status-pending{
+
+    background:#FFF7D6;
+
+    color:#8A6500;
+
+    border-color:#F2DE8A;
+}
+
+
+.order-status-confirmed{
+
+    background:#E8F7EA;
+
+    color:#20752A;
+
+    border-color:#A9DDAF;
+}
+
+
+.order-status-processing{
+
+    background:#E8F0FA;
+
+    color:#174A7C;
+
+    border-color:#B9CCE2;
+}
+
+
+.order-status-shipped{
+
+    background:#EDEBFF;
+
+    color:#5145A5;
+
+    border-color:#C9C5F4;
+}
+
+
+.order-status-delivered{
+
+    background:#E8F7EA;
+
+    color:#20752A;
+
+    border-color:#A9DDAF;
+}
+
+
+.order-status-cancelled{
+
+    background:#FDECEC;
+
+    color:#A42A2A;
+
+    border-color:#F1B5B5;
+}
+
+
+/* =====================================================
+   STATUS MESSAGE
+===================================================== */
+
+.status-message{
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #F8FBF8,
+            #F2F7F3
+        );
+
+    border-left:
+        5px solid
+        var(--green);
+
+    border-radius:
+        0 12px 12px 0;
+
+    padding:
+        17px 18px;
+
+    margin-bottom:25px;
+}
+
+
+.status-message strong{
+
+    color:var(--navy);
+
+    font-size:17px;
+}
+
+
+.status-message p{
+
+    color:var(--muted);
+
+    margin-top:6px;
+
+    line-height:1.6;
+
+    font-size:14px;
+}
+
+
+/* =====================================================
+   ORDER DETAILS
+===================================================== */
+
+.order-details h3{
+
+    color:var(--navy);
+
+    font-size:18px;
+
+    margin-bottom:12px;
+}
+
+
+.order-item{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    padding:
+        15px 0;
+
+    border-bottom:
+        1px solid
+        var(--border);
+}
+
+
+.order-item-name{
+
+    color:var(--text);
+
+    font-weight:800;
+
+    font-size:14px;
+}
+
+
+.order-item-quantity{
+
+    color:var(--muted);
+
+    font-size:13px;
+
+    margin-top:5px;
+}
+
+
+.order-item-price{
+
+    color:var(--navy);
+
+    font-weight:900;
+
+    white-space:nowrap;
+}
+
+
+/* =====================================================
+   TOTAL
+===================================================== */
+
+.order-total{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+    margin-top:20px;
+
+    padding-top:20px;
+
+    border-top:
+        2px solid
+        #EAF1EB;
+
+    font-size:19px;
+}
+
+
+.order-total strong:first-child{
+
+    color:var(--text);
+}
+
+
+.order-total strong:last-child{
+
+    color:var(--green);
+
+    font-size:21px;
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+.order-date{
+
+    color:var(--muted);
+
+    font-size:13px;
+
+    margin-top:15px;
+}
+
+
+/* =====================================================
+   MESSAGES
+===================================================== */
+
+.tracking-message{
+
+    padding:
+        20px;
+
+    border-radius:14px;
+
+    text-align:center;
+
+    line-height:1.6;
+
+    animation:
+        resultAppear .3s ease;
+}
+
+
+.tracking-message strong{
+
+    display:block;
+
+    font-size:16px;
+
+    margin-bottom:5px;
+}
+
+
+.tracking-message p{
+
+    margin-top:5px;
+}
+
+
+.tracking-message.error{
+
+    background:#FDECEC;
+
+    color:#9F2525;
+
+    border:
+        1px solid
+        #F3C0C0;
+}
+
+
+.tracking-message.warning{
+
+    background:#FFF8E6;
+
+    color:#8A6500;
+
+    border:
+        1px solid
+        #F2DE8A;
+}
+
+
+.tracking-message.loading{
+
+    background:#F5F8FA;
+
+    color:var(--muted);
+
+    border:
+        1px solid
+        var(--border);
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:600px){
+
+    header{
+
+        padding:
+            15px 18px;
+    }
+
+
+    .logo{
+
+        font-size:21px;
+
+        letter-spacing:1.5px;
+    }
+
+
+    .back-link{
+
+        padding:
+            8px 12px;
+
+        font-size:12px;
+    }
+
+
+    .tracking-page{
+
+        margin:
+            30px auto;
+
+        padding:
+            0 14px;
+    }
+
+
+    .tracking-card{
+
+        padding:
+            30px 17px;
+
+        border-radius:18px;
+    }
+
+
+    .tracking-title h1{
+
+        font-size:28px;
+    }
+
+
+    .tracking-title p{
+
+        font-size:14px;
+    }
+
+
+    .tracking-order-card{
+
+        padding:
+            18px 15px;
+
+        border-radius:15px;
+    }
+
+
+    .order-top{
+
+        align-items:
+            flex-start;
+    }
+
+
+    .order-item{
+
+        align-items:
+            flex-start;
+    }
+
+
+    .order-item-price{
+
+        font-size:14px;
+    }
+
+
+    .order-total{
+
+        font-size:16px;
+    }
+
+
+    .order-total strong:last-child{
+
+        font-size:18px;
+    }
+
+}
+
+
+/* =====================================================
+   SMALL PHONES
+===================================================== */
+
+@media(max-width:380px){
+
+    .tracking-title h1{
+
+        font-size:25px;
+    }
+
+
+    .logo{
+
+        font-size:19px;
+    }
+
+
+    .back-link{
+
+        padding:
+            7px 10px;
+    }
+
+
+    .order-status{
+
+        font-size:12px;
+
+        padding:
+            8px 12px;
+    }
+
+}
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         HEADER
+    ===================================================== -->
+
+    <header>
+
+        <div class="logo">
+            VAZORA
+        </div>
+
+
+        <a
+            href="index.html"
+            class="back-link"
+        >
+            Back to Vazora Shop
+        </a>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ===================================================== -->
+
+    <main class="tracking-page">
+
+        <div class="tracking-card">
+
+
+            <div class="tracking-title">
+
+                <h1>
+                    Track Your Order
+                </h1>
+
+                <p>
+                    Enter the phone number you used
+                    when placing your order to see
+                    your latest order status.
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 TRACK FORM
+            ================================================= -->
+
+            <form
+                id="trackOrderForm"
+            >
+
+                <div class="form-group">
+
+                    <label
+                        for="trackingPhone"
+                    >
+                        Phone Number
+                    </label>
+
+
+                    <input
+                        type="tel"
+                        id="trackingPhone"
+                        placeholder="07XXXXXXXX"
+                        autocomplete="tel"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    id="trackOrderBtn"
+                >
+                    Track My Order
+                </button>
+
+            </form>
+
+
+
+            <!-- =================================================
+                 RESULT
+            ================================================= -->
+
+            <div
+                id="trackingResult"
+            ></div>
+
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ===================================================== -->
+
+    <script type="module">
+
+        import {
+            initializeApp
+        } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+
+        import {
+            getFirestore,
+            collection,
+            query,
+            where,
+            getDocs
+        } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+        /* =====================================================
+           FIREBASE CONFIG
+        ===================================================== */
+
+        /*
+         * IMPORTANT:
+         * HANO SHYIRAMO EXACT firebaseConfig YA VAZORA
+         * IKORA MURI admin.js YAWE.
+         */
+
+        const firebaseConfig = {
+    apiKey: "AIzaSyAGybD0NNSaJGcDNR-Z8zXK5x-zOgUMhR0",
+    authDomain: "vazora-shop-solution.firebaseapp.com",
+    projectId: "vazora-shop-solution",
+    storageBucket: "vazora-shop-solution.firebasestorage.app",
+    messagingSenderId: "566814054729",
+    appId: "1:566814054729:web:5589e767d484658c20a298"
+};
+
+
+
+        /* =====================================================
+           FIREBASE
+        ===================================================== */
+
+        const app =
+            initializeApp(
+                firebaseConfig
+            );
+
+
+        const db =
+            getFirestore(app);
+
+
+        /* =====================================================
+           ELEMENTS
+        ===================================================== */
+
+        const trackOrderForm =
+            document.getElementById(
+                "trackOrderForm"
+            );
+
+
+        const trackingPhone =
+            document.getElementById(
+                "trackingPhone"
+            );
+
+
+        const trackingResult =
+            document.getElementById(
+                "trackingResult"
+            );
+
+
+        /* =====================================================
+           NORMALIZE PHONE
+        ===================================================== */
+
+        function normalizePhone(phone){
+
+            let value =
+                String(phone || "")
+                    .trim()
+                    .replace(/\s+/g,"");
+
+
+            if(
+                value.startsWith("+250")
+            ){
+
+                value =
+                    "0" +
+                    value.substring(4);
+
+            }
+
+
+            return value;
+
+        }
+
+
+        /* =====================================================
+           MONEY
+        ===================================================== */
+
+        function formatMoney(amount){
+
+            return (
+                Number(amount) || 0
+            ).toLocaleString("en-RW") +
+            " RWF";
+
+        }
+
+
+        /* =====================================================
+           DATE
+        ===================================================== */
+
+        function formatDate(dateValue){
+
+            if(!dateValue){
+
+                return "Date unavailable";
+
+            }
+
+
+            let date;
+
+
+            if(
+                dateValue &&
+                typeof dateValue.toDate === "function"
+            ){
+
+                date =
+                    dateValue.toDate();
+
+            }else{
+
+                date =
+                    new Date(dateValue);
+
+            }
+
+
+            if(
+                Number.isNaN(
+                    date.getTime()
+                )
+            ){
+
+                return "Date unavailable";
+
+            }
+
+
+            return date.toLocaleString(
+                "en-RW",
+                {
+                    dateStyle:"medium",
+                    timeStyle:"short"
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           ESCAPE HTML
+        ===================================================== */
+
+        function escapeHTML(value){
+
+            return String(value ?? "")
+                .replace(/&/g,"&amp;")
+                .replace(/</g,"&lt;")
+                .replace(/>/g,"&gt;")
+                .replace(/"/g,"&quot;")
+                .replace(/'/g,"&#039;");
+
+        }
+
+
+        /* =====================================================
+           STATUS MESSAGE
+        ===================================================== */
+
+        function getStatusMessage(status){
+
+            switch(status){
+
+                case "Pending":
+
+                    return `
+                        <strong>
+                            Pending
+                        </strong>
+
+                        <p>
+                            Your order has been received
+                            and is waiting for confirmation.
+                        </p>
+                    `;
+
+
+                case "Confirmed":
+
+                    return `
+                        <strong>
+                            Confirmed
+                        </strong>
+
+                        <p>
+                            Your order has been confirmed
+                            successfully.
+                        </p>
+                    `;
+
+
+                case "Processing":
+
+                    return `
+                        <strong>
+                            Processing
+                        </strong>
+
+                        <p>
+                            Your order is being processed.
+                        </p>
+                    `;
+
+
+                case "Shipped":
+
+                    return `
+                        <strong>
+                            Shipped
+                        </strong>
+
+                        <p>
+                            Your order has been shipped.
+                        </p>
+                    `;
+
+
+                case "Delivered":
+
+                    return `
+                        <strong>
+                            Delivered
+                        </strong>
+
+                        <p>
+                            Your order has been delivered.
+                        </p>
+                    `;
+
+
+                case "Cancelled":
+
+                    return `
+                        <strong>
+                            Cancelled
+                        </strong>
+
+                        <p>
+                            Your order has been cancelled.
+                        </p>
+                    `;
+
+
+                default:
+
+                    return `
+                        <strong>
+                            ${escapeHTML(
+                                status || "Unknown"
+                            )}
+                        </strong>
+
+                        <p>
+                            Your order status is currently
+                            unavailable.
+                        </p>
+                    `;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           STATUS CLASS
+        ===================================================== */
+
+        function getStatusClass(status){
+
+            return String(
+                status || "unknown"
+            )
+                .toLowerCase()
+                .replace(/\s+/g,"-");
+
+        }
+
+
+        /* =====================================================
+           DISPLAY ORDER
+        ===================================================== */
+
+        function displayOrder(order){
+
+            const status =
+                order.status || "Pending";
+
+
+            const items =
+                Array.isArray(order.items)
+                    ? order.items
+                    : [];
+
+
+            let itemsHTML = "";
+
+
+            items.forEach(item => {
+
+                const quantity =
+                    Number(item.quantity) || 1;
+
+
+                const price =
+                    Number(item.price) || 0;
+
+
+                const subtotal =
+                    Number(item.subtotal) ||
+                    price * quantity;
+
+
+                itemsHTML += `
+
+                    <div class="order-item">
+
+                        <div>
+
+                            <div class="order-item-name">
+
+                                ${escapeHTML(
+                                    item.name ||
+                                    "Product"
+                                )}
+
+                            </div>
+
+
+                            <div
+                                class="
+                                    order-item-quantity
+                                "
+                            >
+
+                                Quantity:
+                                ${quantity}
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="
+                                order-item-price
+                            "
+                        >
+
+                            ${formatMoney(
+                                subtotal
+                            )}
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            });
+
+
+            trackingResult.innerHTML = `
+
+                <div
+                    class="
+                        tracking-order-card
+                    "
+                >
+
+
+                    <div class="order-top">
+
+
+                        <div>
+
+                            <div
+                                class="
+                                    order-id-label
+                                "
+                            >
+                                Order ID
+                            </div>
+
+
+                            <div
+                                class="
+                                    order-id
+                                "
+                            >
+
+                                ${escapeHTML(
+                                    order.id || "-"
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div
+                            class="
+                                order-status
+                                order-status-${getStatusClass(
+                                    status
+                                )}
+                            "
+                        >
+
+                            ${escapeHTML(
+                                status
+                            )}
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div
+                        class="
+                            status-message
+                        "
+                    >
+
+                        ${getStatusMessage(
+                            status
+                        )}
+
+                    </div>
+
+
+
+                    <div
+                        class="
+                            order-details
+                        "
+                    >
+
+                        <h3>
+                            Order Details
+                        </h3>
+
+
+                        ${
+                            itemsHTML ||
+                            `
+                            <div
+                                class="
+                                    tracking-message
+                                    warning
+                                "
+                            >
+                                No products found
+                                in this order.
+                            </div>
+                            `
+                        }
+
+                    </div>
+
+
+
+                    <div
+                        class="
+                            order-total
+                        "
+                    >
+
+                        <strong>
+                            Total
+                        </strong>
+
+
+                        <strong>
+
+                            ${formatMoney(
+                                order.total
+                            )}
+
+                        </strong>
+
+                    </div>
+
+
+
+                    <div
+                        class="
+                            order-date
+                        "
+                    >
+
+                        Order placed:
+
+                        ${formatDate(
+                            order.createdAt
+                        )}
+
+                    </div>
+
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* =====================================================
+           SEARCH ORDER
+        ===================================================== */
+
+        async function searchOrder(phone){
+
+            const normalizedPhone =
+                normalizePhone(phone);
+
+
+            if(!normalizedPhone){
+
+                trackingResult.innerHTML = `
+
+                    <div
+                        class="
+                            tracking-message
+                            error
+                        "
+                    >
+
+                        Please enter your
+                        phone number.
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            trackingResult.innerHTML = `
+
+                <div
+                    class="
+                        tracking-message
+                        loading
+                    "
+                >
+
+                    Searching for your order...
+
+                </div>
+
+            `;
+
+
+            try{
+
+                const ordersQuery =
+                    query(
+                        collection(
+                            db,
+                            "orders"
+                        ),
+
+                        where(
+                            "customerPhone",
+                            "==",
+                            normalizedPhone
+                        )
+                    );
+
+
+                const snapshot =
+                    await getDocs(
+                        ordersQuery
+                    );
+
+
+                if(snapshot.empty){
+
+                    trackingResult.innerHTML = `
+
+                        <div
+                            class="
+                                tracking-message
+                                warning
+                            "
+                        >
+
+                            <strong>
+                                No order found
+                            </strong>
+
+                            <p>
+                                We could not find an
+                                order using this
+                                phone number.
+                            </p>
+
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
+
+
+                const orders = [];
+
+
+                snapshot.forEach(
+                    docSnapshot => {
+
+                        orders.push({
+
+                            id:
+                                docSnapshot.id,
+
+                            ...docSnapshot.data()
+
+                        });
+
+                    }
+                );
+
+
+                orders.sort(
+                    (a,b) =>
+                        new Date(
+                            b.createdAt || 0
+                        ) -
+                        new Date(
+                            a.createdAt || 0
+                        )
+                );
+
+
+                /*
+                 * Show latest order.
+                 */
+
+                displayOrder(
+                    orders[0]
+                );
+
+
+            }catch(error){
+
+                console.error(
+                    "Order tracking error:",
+                    error
+                );
+
+
+                trackingResult.innerHTML = `
+
+                    <div
+                        class="
+                            tracking-message
+                            error
+                        "
+                    >
+
+                        <strong>
+                            Unable to find
+                            your order
+                        </strong>
+
+                        <p>
+                            Please try again.
+                        </p>
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           FORM SUBMIT
+        ===================================================== */
+
+        if(trackOrderForm){
+
+            trackOrderForm.addEventListener(
+                "submit",
+                async function(event){
+
+                    event.preventDefault();
+
+
+                    await searchOrder(
+                        trackingPhone.value
+                    );
+
+                }
+            );
+
+        }
+
+
+        console.log(
+            "VAZORA Order Tracking loaded successfully."
+        );
+
+    </script>
+
+</body>
+
+</html>

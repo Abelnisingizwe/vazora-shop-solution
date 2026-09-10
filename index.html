@@ -13,25 +13,249 @@
     box-sizing:border-box;
 }
 
-:root{
-    --primary:#111827;
-    --secondary:#2563eb;
-    --accent:#f59e0b;
-    --light:#f8fafc;
-    --white:#ffffff;
-    --text:#1f2937;
-    --muted:#6b7280;
-    --border:#e5e7eb;
-    --danger:#dc2626;
-    --success:#16a34a;
-    --shadow:0 10px 30px rgba(0,0,0,.08);
+:root {
+
+    --primary: #2E8B34;
+
+    --primary-dark: #256B29;
+
+    --bg: #FFFFFF;
+
+    --card: #FFFFFF;
+
+    --text: #0B1F3A;
+
+    --muted: #6B7280;
+
+    --border: #E5E7EB;
+
+    --danger: #DC2626;
+
+    --success: #3CA836;
+
+    --warning: #D97706;
+
+    --sidebar: #0B1F3A;
+
 }
+/* =====================================================
+   VAZORA PREMIUM SPARKLE BACKGROUND
+===================================================== */
 
 body{
-    font-family:Arial,Helvetica,sans-serif;
-    background:#f8fafc;
-    color:var(--text);
-    line-height:1.5;
+    position:relative;
+    overflow-x:hidden;
+    background:#FFFFFF;
+}
+
+/* Premium sparkle layer */
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+
+    pointer-events:none;
+
+    background-image:
+        radial-gradient(circle at 8% 15%, rgba(46,139,52,.30) 0 1px, transparent 2px),
+        radial-gradient(circle at 18% 42%, rgba(11,31,58,.22) 0 1px, transparent 2px),
+        radial-gradient(circle at 31% 18%, rgba(126,211,33,.28) 0 1px, transparent 2px),
+        radial-gradient(circle at 43% 68%, rgba(46,139,52,.24) 0 1px, transparent 2px),
+        radial-gradient(circle at 56% 30%, rgba(11,31,58,.20) 0 1px, transparent 2px),
+        radial-gradient(circle at 68% 76%, rgba(126,211,33,.30) 0 1px, transparent 2px),
+        radial-gradient(circle at 79% 22%, rgba(46,139,52,.24) 0 1px, transparent 2px),
+        radial-gradient(circle at 91% 58%, rgba(11,31,58,.20) 0 1px, transparent 2px);
+
+    background-size:
+        260px 260px,
+        310px 310px,
+        220px 220px,
+        340px 340px,
+        280px 280px,
+        320px 320px,
+        240px 240px,
+        300px 300px;
+
+    animation:vazoraSparkles 18s linear infinite;
+
+    z-index:-1;
+}
+
+/* Soft luxury glow */
+body::after{
+    content:"";
+    position:fixed;
+
+    width:500px;
+    height:500px;
+
+    top:-220px;
+    right:-180px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(126,211,33,.10) 0%,
+            rgba(46,139,52,.04) 35%,
+            transparent 70%
+        );
+
+    pointer-events:none;
+
+    z-index:-1;
+
+    animation:vazoraGlow 10s ease-in-out infinite alternate;
+}
+
+@keyframes vazoraSparkles{
+
+    0%{
+        background-position:
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0;
+    }
+
+    50%{
+        background-position:
+            80px 50px,
+            -60px 90px,
+            100px -40px,
+            -90px 70px,
+            70px 100px,
+            -80px -50px,
+            60px 80px,
+            -70px 40px;
+    }
+
+    100%{
+        background-position:
+            160px 100px,
+            -120px 180px,
+            200px -80px,
+            -180px 140px,
+            140px 200px,
+            -160px -100px,
+            120px 160px,
+            -140px 80px;
+    }
+}
+
+@keyframes vazoraGlow{
+
+    from{
+        transform:translate(0,0) scale(1);
+        opacity:.45;
+    }
+
+    to{
+        transform:translate(-100px,120px) scale(1.25);
+        opacity:.85;
+    }
+}
+
+body{ 
+    font-family:Arial,Helvetica,sans-serif; 
+    background:#FFFFFF; 
+    color:var(--text); 
+    line-height:1.5; 
+}
+/* =====================================================
+   VAZORA — PREMIUM SPARKLE BACKGROUND
+===================================================== */
+
+body{
+    position:relative;
+    background:#FFFFFF;
+    overflow-x:hidden;
+}
+
+/* Soft premium light effect */
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:-1;
+
+    background:
+        radial-gradient(circle at 10% 20%,
+            rgba(46,139,52,0.10) 0 2px,
+            transparent 3px),
+
+        radial-gradient(circle at 25% 70%,
+            rgba(11,31,58,0.08) 0 2px,
+            transparent 3px),
+
+        radial-gradient(circle at 45% 35%,
+            rgba(126,211,33,0.12) 0 2px,
+            transparent 3px),
+
+        radial-gradient(circle at 65% 80%,
+            rgba(46,139,52,0.08) 0 2px,
+            transparent 3px),
+
+        radial-gradient(circle at 82% 25%,
+            rgba(11,31,58,0.08) 0 2px,
+            transparent 3px),
+
+        radial-gradient(circle at 92% 65%,
+            rgba(126,211,33,0.10) 0 2px,
+            transparent 3px);
+
+    background-size:180px 180px;
+    animation:vazoraSparkleMove 12s linear infinite;
+}
+
+/* Subtle moving glow */
+body::after{
+    content:"";
+    position:fixed;
+    width:420px;
+    height:420px;
+    top:-180px;
+    right:-160px;
+
+    background:radial-gradient(
+        circle,
+        rgba(126,211,33,0.12),
+        transparent 70%
+    );
+
+    border-radius:50%;
+    pointer-events:none;
+    z-index:-1;
+
+    animation:vazoraGlow 8s ease-in-out infinite alternate;
+}
+
+@keyframes vazoraSparkleMove{
+    from{
+        background-position:0 0;
+    }
+
+    to{
+        background-position:180px 180px;
+    }
+}
+
+@keyframes vazoraGlow{
+    from{
+        transform:translate(0,0) scale(1);
+        opacity:.45;
+    }
+
+    to{
+        transform:translate(-80px,100px) scale(1.25);
+        opacity:.85;
+    }
 }
 
 button,
@@ -54,12 +278,12 @@ a{
    HEADER
 ========================= */
 
-header{
-    position:sticky;
-    top:0;
-    z-index:1000;
-    background:white;
-    border-bottom:1px solid var(--border);
+header{ 
+    position:sticky; 
+    top:0; 
+    z-index:1000; 
+    background:#FFFFFF; 
+    border-bottom:1px solid var(--border); 
 }
 
 .navbar{
@@ -105,8 +329,8 @@ header{
     font-weight:800;
 }
 
-.brand-text span{
-    color:var(--secondary);
+.brand-text span{ 
+    color:#2E8B34; 
 }
 
 .brand-text small{
@@ -133,11 +357,10 @@ header{
     background:#f9fafb;
 }
 
-.search-box input:focus{
-    border-color:var(--secondary);
-    background:white;
+.search-box input:focus{ 
+    border-color:#2E8B34; 
+    background:#FFFFFF; 
 }
-
 .search-icon{
     position:absolute;
     right:14px;
@@ -156,10 +379,27 @@ header{
     align-items:center;
     gap:8px;
 }
+.track-order-link{
+    text-decoration:none;
+    background:var(--green, #2E8B34);
+    color:#ffffff;
+    padding:11px 16px;
+    border-radius:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:600;
+    transition:0.3s ease;
+    white-space:nowrap;
+}
 
-.cart-count{
-    background:var(--accent);
-    color:#111;
+.track-order-link:hover{
+    background:var(--green-2, #3CA836);
+    transform:translateY(-2px);
+}
+.cart-count{ 
+    background:#7ED321; 
+    color:#0B1F3A; 
     min-width:21px;
     height:21px;
     border-radius:50%;
@@ -181,9 +421,9 @@ header{
    HERO
 ========================= */
 
-.hero{
-    background:linear-gradient(135deg,#111827,#1e3a8a);
-    color:white;
+.hero{ 
+    background:linear-gradient(135deg,#0B1F3A,#132A4D); 
+    color:#FFFFFF; 
 }
 
 .hero-inner{
@@ -202,13 +442,13 @@ header{
     margin-bottom:18px;
 }
 
-.hero h2 span{
-    color:#fbbf24;
+.hero h2 span{ 
+    color:#7ED321; 
 }
 
-.hero p{
-    max-width:650px;
-    color:#dbeafe;
+.hero p{ 
+    max-width:650px; 
+    color:#E8F3E8; 
     font-size:17px;
     margin-bottom:25px;
 }
@@ -231,14 +471,14 @@ header{
     transform:translateY(-2px);
 }
 
-.btn-primary{
-    background:#f59e0b;
-    color:#111827;
+.btn-primary{ 
+    background:#2E8B34; 
+    color:#FFFFFF; 
 }
 
 .btn-light{
     background:white;
-    color:#111827;
+    color:#0B1F3A;
 }
 
 .hero-card{
@@ -372,9 +612,9 @@ header{
     padding:17px;
 }
 
-.product-category{
-    font-size:12px;
-    color:var(--secondary);
+.product-category{ 
+    font-size:12px; 
+    color:#2E8B34; 
     font-weight:bold;
     margin-bottom:5px;
 }
@@ -404,14 +644,10 @@ header{
     font-size:17px;
 }
 
-.add-btn{
-    border:none;
-    background:var(--secondary);
-    color:white;
-    padding:9px 13px;
-    border-radius:8px;
-    font-size:13px;
-    font-weight:bold;
+.add-btn{ 
+    border:none; 
+    background:#2E8B34; 
+    color:#FFFFFF;
 }
 
 .add-btn:disabled{
@@ -483,10 +719,10 @@ header{
    FOOTER
 ========================= */
 
-footer{
-    background:#111827;
-    color:white;
-    margin-top:40px;
+footer{ 
+    background:#0B1F3A; 
+    color:#FFFFFF; 
+    margin-top:40px; 
 }
 
 .footer-inner{
@@ -502,8 +738,8 @@ footer{
     margin-bottom:12px;
 }
 
-.footer-column p{
-    color:#cbd5e1;
+.footer-column p{ 
+    color:#DCE8E0; 
     font-size:14px;
 }
 
@@ -742,10 +978,10 @@ footer{
     outline:none;
 }
 
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus{
-    border-color:var(--secondary);
+.form-group input:focus, 
+.form-group textarea:focus, 
+.form-group select:focus{ 
+    border-color:#2E8B34; 
 }
 
 .form-group textarea{
@@ -979,11 +1215,11 @@ footer{
     transition: all 0.25s ease;
     text-align: center;
     font-weight: 600;
-    color: #111827;
+    color: #0B1F3A;
 }
 
-.payment-method-card:hover {
-    border-color: #c9a227;
+.payment-method-card:hover { 
+    border-color: #2E8B34; 
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
@@ -1012,10 +1248,10 @@ footer{
     color: #374151;
 }
 
-.selected-payment-method h3 {
-    margin: 12px 0;
-    padding: 12px;
-    background: #111827;
+.selected-payment-method h3 { 
+    margin: 12px 0; 
+    padding: 12px; 
+    background: #0B1F3A; 
     color: #ffffff;
     border-radius: 8px;
     font-size: 18px;
@@ -1043,12 +1279,12 @@ footer{
 
 .payment-back-btn {
     background: #e5e7eb;
-    color: #111827;
+    color: #0B1F3A;
 }
 
-.payment-confirm-btn {
-    background: #111827;
-    color: #ffffff;
+.payment-confirm-btn { 
+    background: #2E8B34; 
+    color: #ffffff; 
 }
 
 .payment-back-btn:hover,
@@ -1103,34 +1339,43 @@ footer{
 
     <div class="nav-actions">
 
-        <div class="search-box">
+    <div class="search-box">
 
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Search products..."
-            >
-
-            <span class="search-icon">⌕</span>
-
-        </div>
-
-        <button
-            class="cart-button"
-            onclick="openCart()"
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search products..."
         >
-            Cart
 
-            <span
-                class="cart-count"
-                id="cartCount"
-            >
-                0
-            </span>
-
-        </button>
+        <span class="search-icon">⌕</span>
 
     </div>
+
+
+    <a
+        href="track-order.html"
+        class="track-order-link"
+    >
+        Track Order
+    </a>
+
+
+    <button
+        class="cart-button"
+        onclick="openCart()"
+    >
+        Cart
+
+        <span
+            class="cart-count"
+            id="cartCount"
+        >
+            0
+        </span>
+
+    </button>
+
+</div>
 
 </nav>
 
@@ -1310,37 +1555,50 @@ footer{
 
     <div class="info-grid">
 
-        <div class="info-card">
+    <div class="info-card">
 
-            <h3>Phone</h3>
+        <h3>Phone</h3>
 
-            <p id="shopPhone">
-                Not provided
-            </p>
-
-        </div>
-
-        <div class="info-card">
-
-            <h3>WhatsApp</h3>
-
-            <p id="shopWhatsapp">
-                Not provided
-            </p>
-
-        </div>
-
-        <div class="info-card">
-
-            <h3>Location</h3>
-
-            <p id="shopAddress">
-                Not provided
-            </p>
-
-        </div>
+        <p id="shopPhone">
+            Not provided
+        </p>
 
     </div>
+
+
+    <div class="info-card">
+
+        <h3>WhatsApp</h3>
+
+        <p id="shopWhatsapp">
+            Not provided
+        </p>
+
+    </div>
+
+
+    <div class="info-card">
+
+        <h3>Airtel</h3>
+
+        <p id="shopAirtel">
+            Not provided
+        </p>
+
+    </div>
+
+
+    <div class="info-card">
+
+        <h3>Location</h3>
+
+        <p id="shopAddress">
+            Not provided
+        </p>
+
+    </div>
+
+</div>
 
 </div>
 
@@ -1779,7 +2037,7 @@ footer{
                 id="paymentContinueBtn"
                 class="payment-confirm-btn">
 
-                Continue
+                Continue to pay
 
             </button>
         <div class="payment-actions">
@@ -2208,7 +2466,8 @@ function renderShopSettings(){
     document.getElementById("shopAddress").textContent =
         settings.address ||
         "Not provided";
-
+document.getElementById("shopAirtel").textContent =
+    settings.airtelNumber || "Not provided";
 
     document.getElementById("footerPhone").textContent =
         "Phone: " +
@@ -2479,20 +2738,34 @@ function renderProducts(){
 
             <div class="product-image">
 
-                ${
-                    image
-                    ?
-                    `<img
-                        src="${image}"
-                        alt="${escapeHTML(product.name)}"
-                    >`
-                    :
-                    `<div class="no-image">
-                        No image
-                    </div>`
-                }
+    ${
+        image
+        ?
+        `<img
+            src="${image}"
+            alt="${escapeHTML(product.name)}"
+        >`
+        :
+        `<div class="no-image">
+            No image
+        </div>`
+    }
 
-                <span class="stock-badge">
+    <div class="product-watermark">
+        <span class="watermark-brand">
+            VAZORA
+        </span>
+
+        <span class="watermark-message">
+            EVERYTHING YOU NEED
+        </span>
+
+        <span class="watermark-solution">
+            WE PROVIDE THE SOLUTION
+        </span>
+    </div>
+
+    <span class="stock-badge">
 
                     ${
                         outOfStock
@@ -3910,6 +4183,236 @@ document
 document
     .getElementById("paymentContinueBtn")
     .addEventListener("click", function(){
+        if(selectedPaymentMethod === "CODE"){
+
+    const pendingOrder =
+        JSON.parse(
+            localStorage.getItem(
+                "vazoraPendingOrder"
+            )
+        );
+
+    if(!pendingOrder){
+
+        showToast(
+            "Order information not found."
+        );
+
+        return;
+    }
+
+    const companyNumber =
+    settings.phone || "";
+    if(!companyNumber){
+
+    showToast(
+        "Company code is not configured."
+    );
+
+    return;
+    }
+
+    const amount =
+        pendingOrder.total;
+
+    const ussdCode =
+    `*182*8*1*${companyNumber}*${amount}#`;
+    document.getElementById(
+        "selectedPaymentMethod"
+    ).innerHTML = `
+        <p>
+            <strong>Pay with Code</strong>
+        </p>
+
+        <p>
+            Dial this code on your phone:
+        </p>
+
+        <h3>
+            ${ussdCode}
+        </h3>
+
+        <p>
+            Amount:
+            <strong>
+                ${amount.toLocaleString()} RWF
+            </strong>
+        </p>
+
+        <button
+            type="button"
+            id="codePaidBtn"
+            class="payment-confirm-btn"
+            style="margin-top:15px;"
+        >
+            I Have Paid
+        </button>
+    `;
+
+    document
+        .getElementById("codePaidBtn")
+        .addEventListener(
+            "click",
+            function(){
+
+                document.getElementById(
+                    "confirmedOrderId"
+                ).textContent =
+                    pendingOrder.id;
+
+                document.getElementById(
+                    "confirmedOrderTotal"
+                ).textContent =
+                    pendingOrder.total.toLocaleString() +
+                    " RWF";
+
+                localStorage.setItem(
+    "vazoraPendingOrder",
+    JSON.stringify({
+        ...pendingOrder,
+        status: "Paid",
+        paymentMethod: "Pay with Code",
+        paidAt: new Date().toISOString()
+    })
+);
+
+closeModal("paymentModal");
+
+document
+    .getElementById(
+        "orderConfirmationModal"
+    )
+    .classList.add("show");
+            }
+        );
+
+    window.location.href =
+        "tel:" + encodeURIComponent(ussdCode);
+
+    return;
+}
+if(selectedPaymentMethod === "Airtel"){
+
+    const pendingOrder =
+        JSON.parse(
+            localStorage.getItem(
+                "vazoraPendingOrder"
+            )
+        );
+
+    if(!pendingOrder){
+
+        showToast(
+            "Order information not found."
+        );
+
+        return;
+    }
+
+    const airtelNumber =
+        settings.airtelNumber || "";
+
+    if(!airtelNumber){
+
+        showToast(
+            "Airtel Company Number is not configured."
+        );
+
+        return;
+    }
+
+    const amount =
+        pendingOrder.total;
+
+    const ussdCode =
+        `*500*1*1*${airtelNumber}*${amount}#`;
+
+    document.getElementById(
+        "selectedPaymentMethod"
+    ).innerHTML = `
+        <p>
+            <strong>Airtel Money</strong>
+        </p>
+
+        <p>
+            Dial this code on your phone:
+        </p>
+
+        <h3>
+            ${ussdCode}
+        </h3>
+
+        <p>
+            Amount:
+            <strong>
+                ${amount.toLocaleString()} RWF
+            </strong>
+        </p>
+
+        ${
+            amount >= 15000
+            ? `
+                <p>
+                    <strong>
+                        Watsindiye Free Delivery! Uyu munsi tubikugereza ku rugo.
+                    </strong>
+                </p>
+            `
+            : ""
+        }
+
+        <button
+            type="button"
+            id="airtelPaidBtn"
+            class="payment-confirm-btn"
+            style="margin-top:15px;"
+        >
+            I Have Paid
+        </button>
+    `;
+
+    document
+        .getElementById("airtelPaidBtn")
+        .addEventListener(
+            "click",
+            function(){
+
+                document.getElementById(
+                    "confirmedOrderId"
+                ).textContent =
+                    pendingOrder.id;
+
+                document.getElementById(
+                    "confirmedOrderTotal"
+                ).textContent =
+                    pendingOrder.total.toLocaleString() +
+                    " RWF";
+
+                localStorage.setItem(
+                    "vazoraPendingOrder",
+                    JSON.stringify({
+                        ...pendingOrder,
+                        status: "Paid",
+                        paymentMethod: "Airtel Money",
+                        paidAt: new Date().toISOString()
+                    })
+                );
+
+                closeModal("paymentModal");
+
+                document
+                    .getElementById(
+                        "orderConfirmationModal"
+                    )
+                    .classList.add("show");
+            }
+        );
+
+    window.location.href =
+        "tel:" + encodeURIComponent(ussdCode);
+
+    return;
+}
 if(selectedPaymentMethod === "MTN"){
 
     const pendingOrder =
@@ -4011,6 +4514,7 @@ if(selectedPaymentMethod === "MTN"){
 
                 return;
             }
+            
 
             document.getElementById(
                 "confirmedOrderId"
@@ -4058,7 +4562,6 @@ document
         );
 
     });
-
 
 /* =========================
    CLOSE MODAL
@@ -4240,7 +4743,6 @@ window.orderOnWhatsApp = orderOnWhatsApp;
 /* =========================
    SEND PAID ORDER
 ========================= */
-
 document
     .getElementById("sendOrderBtn")
     .addEventListener("click", async function(){
@@ -4271,11 +4773,36 @@ document
                 ),
                 {
                     ...pendingOrder,
-                    status: "Paid",
+
+                    /*
+                     * ORDER STATUS
+                     * REMAINS PENDING UNTIL
+                     * ADMIN CONFIRMS
+                     */
+                    status: "Pending",
+
                     orderMethod: "Website",
-                    paymentMethod: "MTN Mobile Money",
-                    paidAt: new Date().toISOString()
+
+                    /*
+                     * PAYMENT STATUS IS
+                     * SEPARATE FROM ORDER STATUS
+                     */
+                    paymentStatus: "Paid",
+
+                    paymentMethod:
+                        pendingOrder.paymentMethod ||
+                        "MTN Mobile Money",
+
+                    paidAt:
+                        pendingOrder.paidAt ||
+                        new Date().toISOString(),
+
+                    stockDeducted: false
                 }
+            );
+
+            localStorage.removeItem(
+                "vazora_customer_cart"
             );
 
             localStorage.removeItem(
@@ -4300,7 +4827,6 @@ document
             showToast(
                 "Failed to send order. Please try again."
             );
-
         }
 
     });

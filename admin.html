@@ -13,19 +13,30 @@
         }
 
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --bg: #f5f7fb;
-            --card: #ffffff;
-            --text: #111827;
-            --muted: #6b7280;
-            --border: #e5e7eb;
-            --danger: #dc2626;
-            --success: #16a34a;
-            --warning: #d97706;
-            --sidebar: #111827;
-        }
 
+    --primary: #2E8B34;
+
+    --primary-dark: #256B29;
+
+    --bg: #FFFFFF;
+
+    --card: #FFFFFF;
+
+    --text: #0B1F3A;
+
+    --muted: #6B7280;
+
+    --border: #E5E7EB;
+
+    --danger: #DC2626;
+
+    --success: #3CA836;
+
+    --warning: #D97706;
+
+    --sidebar: #0B1F3A;
+
+}
         body {
             font-family: Arial, Helvetica, sans-serif;
             background: var(--bg);
@@ -776,6 +787,88 @@
         }
 
         /* ================= RESPONSIVE ================= */
+        /* ================= ORDER DETAILS MODAL ================= */
+
+.order-details-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 600;
+}
+
+.order-details-modal {
+    background: #ffffff;
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+
+.order-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.order-details-header h2 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.order-details-header button {
+    border: none;
+    background: #f3f4f6;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.order-details-section {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+}
+
+.order-details-section h3 {
+    font-size: 14px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 10px;
+}
+
+.order-details-section p {
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.order-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.order-details-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 17px;
+    padding-top: 10px;
+}
 
         @media (max-width: 1200px) {
             .products-grid {
@@ -951,7 +1044,7 @@
 
             <div class="sidebar-brand">
                 <h2>VAZORA SHOP</h2>
-                <span>SHOP SOLUTION</span>
+                <span>SOLUTION</span>
             </div>
 
             <nav class="nav">
@@ -1415,15 +1508,29 @@
 
                                 <div class="form-group">
 
-                                    <label>WhatsApp Number</label>
+    <label>WhatsApp Number</label>
 
-                                    <input
-                                        id="shopWhatsapp"
-                                        type="tel"
-                                        placeholder="Enter WhatsApp number"
-                                    >
+    <input
+        id="shopWhatsapp"
+        type="tel"
+        placeholder="Enter WhatsApp number"
+    >
 
-                                </div>
+</div>
+
+
+<div class="form-group">
+
+    <label>Airtel Company Number</label>
+
+    <input
+        id="shopAirtelNumber"
+        type="tel"
+        inputmode="numeric"
+        placeholder="Enter Airtel company number"
+    >
+
+</div>
 
 
                                 <div class="form-group">
@@ -1709,9 +1816,9 @@ import {
     getDoc,
     doc,
     setDoc,
-    deleteDoc
+    deleteDoc,
+    runTransaction
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
 
 // =========================================================
 // FIREBASE CONFIG
@@ -2911,6 +3018,8 @@ function loadSettings() {
         settings.phone || "";
     document.getElementById("shopCompanyCode").value =
      settings.companyCode || "";
+     document.getElementById("shopAirtelNumber").value =
+    settings.airtelNumber || "";
 
     document.getElementById("shopWhatsapp").value =
         settings.whatsapp || "";
@@ -3069,9 +3178,11 @@ document.getElementById("saveSettingsBtn")
     ).value.trim(),
 
 companyCode:
-    document.getElementById(
-        "shopCompanyCode"
-    ).value.trim(),
+    document.getElementById("shopCompanyCode").value.trim(),
+
+airtelNumber:
+    document.getElementById("shopAirtelNumber").value.trim(),
+
 logo
 
 };
@@ -3202,6 +3313,9 @@ function renderOrders() {
     body.innerHTML =
         orders.map(order => {
 
+            const currentStatus =
+                order.status || "Pending";
+
             return `
                 <tr>
 
@@ -3239,18 +3353,59 @@ function renderOrders() {
                     </td>
 
                     <td>
-                        <span class="status ${
-                            order.status === "Completed"
-                            ? "status-completed"
-                            : "status-pending"
-                        }">
 
-                            ${escapeHtml(
-                                order.status ||
-                                "Pending"
-                            )}
+                        <select
+                            class="order-status-select"
+                            onchange="updateOrderStatus(
+                                '${escapeHtml(order.id)}',
+                                this.value
+                            )"
+                        >
 
-                        </span>
+                            <option
+                                value="Pending"
+                                ${currentStatus === "Pending" ? "selected" : ""}
+                            >
+                                Pending
+                            </option>
+
+                            <option
+                                value="Confirmed"
+                                ${currentStatus === "Confirmed" ? "selected" : ""}
+                            >
+                                Confirmed
+                            </option>
+
+                            <option
+                                value="Processing"
+                                ${currentStatus === "Processing" ? "selected" : ""}
+                            >
+                                Processing
+                            </option>
+
+                            <option
+                                value="Shipped"
+                                ${currentStatus === "Shipped" ? "selected" : ""}
+                            >
+                                Shipped
+                            </option>
+
+                            <option
+                                value="Delivered"
+                                ${currentStatus === "Delivered" ? "selected" : ""}
+                            >
+                                Delivered
+                            </option>
+
+                            <option
+                                value="Cancelled"
+                                ${currentStatus === "Cancelled" ? "selected" : ""}
+                            >
+                                Cancelled
+                            </option>
+
+                        </select>
+
                     </td>
 
                     <td>
@@ -3262,19 +3417,680 @@ function renderOrders() {
 
                     <td>
 
-                        <button
-                            class="btn btn-success"
-                            onclick="completeOrder('${escapeHtml(order.id)}')"
-                        >
-                            Complete
-                        </button>
+    <button
+        class="btn btn-primary"
+       onclick="window.viewOrderDetails('${escapeHtml(order.id)}')"
+    >
+        View Details
+    </button>
 
-                    </td>
+    <button
+        class="btn btn-danger"
+        onclick="deleteOrder('${escapeHtml(order.id)}')"
+    >
+        Delete
+    </button>
+
+</td>
 
                 </tr>
             `;
 
         }).join("");
+}
+/* =====================================================
+   VIEW ORDER DETAILS
+===================================================== */
+
+window.viewOrderDetails = function viewOrderDetails(id) {
+
+    const order =
+        orders.find(
+            o => String(o.id) === String(id)
+        );
+
+    if (!order) {
+
+        showToast(
+            "Order not found.",
+            "error"
+        );
+
+        return;
+    }
+
+    const items =
+        Array.isArray(order.items)
+            ? order.items
+            : [];
+
+    let itemsHTML = "";
+
+    items.forEach(item => {
+
+        const quantity =
+            Number(item.quantity) || 1;
+
+        const price =
+            Number(item.price) || 0;
+
+        const subtotal =
+            Number(item.subtotal) ||
+            price * quantity;
+
+        itemsHTML += `
+            <div class="order-detail-item">
+
+                <div>
+
+                    <strong>
+                        ${escapeHtml(
+                            item.name ||
+                            "Product"
+                        )}
+                    </strong>
+
+                    <div>
+                        Quantity:
+                        ${quantity}
+                    </div>
+
+                    <div>
+                        Price:
+                        ${formatRWF(price)}
+                    </div>
+
+                </div>
+
+                <strong>
+                    ${formatRWF(subtotal)}
+                </strong>
+
+            </div>
+        `;
+    });
+
+    const detailsHTML = `
+
+        <div class="order-details-modal">
+
+            <div class="order-details-header">
+
+                <h2>
+                    Order Details
+                </h2>
+
+                <button
+                    type="button"
+                    onclick="closeOrderDetails()"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <div class="order-details-section">
+
+                <h3>
+                    Order Information
+                </h3>
+
+                <p>
+                    <strong>Order ID:</strong>
+                    ${escapeHtml(order.id || "-")}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    ${escapeHtml(
+                        order.status || "Pending"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Order Method:</strong>
+                    ${escapeHtml(
+                        order.orderMethod ||
+                        "Website"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Order Date:</strong>
+                    ${formatDate(
+                        order.createdAt ||
+                        order.date
+                    )}
+                </p>
+
+            </div>
+
+            <div class="order-details-section">
+
+                <h3>
+                    Customer Information
+                </h3>
+
+                <p>
+                    <strong>Name:</strong>
+                    ${escapeHtml(
+                        order.customerName ||
+                        order.customer ||
+                        "-"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Phone:</strong>
+                    ${escapeHtml(
+                        order.customerPhone ||
+                        order.phone ||
+                        "-"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Address:</strong>
+                    ${escapeHtml(
+                        order.customerAddress ||
+                        order.address ||
+                        "-"
+                    )}
+                </p>
+
+                ${
+                    order.customerNote
+                    ?
+                    `
+                    <p>
+                        <strong>Note:</strong>
+                        ${escapeHtml(
+                            order.customerNote
+                        )}
+                    </p>
+                    `
+                    :
+                    ""
+                }
+
+            </div>
+
+            <div class="order-details-section">
+
+                <h3>
+                    Payment Information
+                </h3>
+
+                <p>
+                    <strong>Payment Method:</strong>
+                    ${escapeHtml(
+                        order.paymentMethod ||
+                        "-"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Payment Status:</strong>
+                    ${escapeHtml(
+                        order.paymentStatus ||
+                        "-"
+                    )}
+                </p>
+
+            </div>
+
+            <div class="order-details-section">
+
+                <h3>
+                    Products
+                </h3>
+
+                ${
+                    itemsHTML ||
+                    `
+                    <p>
+                        No products found.
+                    </p>
+                    `
+                }
+
+            </div>
+
+            <div class="order-details-total">
+
+                <strong>
+                    Total
+                </strong>
+
+                <strong>
+                    ${formatRWF(
+                        order.total || 0
+                    )}
+                </strong>
+
+            </div>
+
+        </div>
+
+    `;
+
+    let modal =
+        document.getElementById(
+            "orderDetailsModal"
+        );
+
+    if (!modal) {
+
+        modal =
+            document.createElement(
+                "div"
+            );
+
+        modal.id =
+            "orderDetailsModal";
+
+        modal.className =
+            "order-details-overlay";
+
+        document.body.appendChild(
+            modal
+        );
+    }
+
+    modal.innerHTML =
+        detailsHTML;
+
+    modal.style.display =
+        "flex";
+}
+/* =====================================================
+   CLOSE ORDER DETAILS
+===================================================== */
+
+function closeOrderDetails() {
+
+    const modal =
+        document.getElementById(
+            "orderDetailsModal"
+        );
+
+    if (modal) {
+
+        modal.style.display =
+            "none";
+    }
+}
+window.closeOrderDetails =
+    closeOrderDetails;
+async function updateOrderStatus(id, status) {
+
+    const order =
+        orders.find(
+            o => o.id === id
+        );
+
+    if (!order) return;
+
+    try {
+
+        /*
+         * =====================================================
+         * CONFIRM ORDER
+         * STOCK IS DEDUCTED ONLY HERE
+         * =====================================================
+         */
+
+        if (
+            status === "Confirmed" &&
+            order.stockDeducted !== true
+        ) {
+
+            await runTransaction(
+                db,
+                async (transaction) => {
+
+                    const orderRef =
+                        doc(
+                            db,
+                            "orders",
+                            String(id)
+                        );
+
+                    /*
+                     * READ ORDER
+                     */
+                    const orderSnapshot =
+                        await transaction.get(
+                            orderRef
+                        );
+
+                    if (!orderSnapshot.exists()) {
+
+                        throw new Error(
+                            "Order not found."
+                        );
+
+                    }
+
+                    const currentOrder =
+                        orderSnapshot.data();
+
+                    /*
+                     * PREVENT DOUBLE DEDUCTION
+                     */
+                    if (
+                        currentOrder.stockDeducted === true
+                    ) {
+
+                        return;
+
+                    }
+
+                    const items =
+                        currentOrder.items || [];
+
+                    if (items.length === 0) {
+
+                        throw new Error(
+                            "This order has no products."
+                        );
+
+                    }
+
+                    /*
+                     * =================================================
+                     * READ ALL PRODUCTS FIRST
+                     * =================================================
+                     */
+
+                    const productDataList = [];
+
+                    for (
+                        const item of items
+                    ) {
+
+                        const productId =
+                            String(item.id);
+
+                        console.log(
+                            "Checking product:",
+                            productId
+                        );
+
+                        const productRef =
+                            doc(
+                                db,
+                                "products",
+                                productId
+                            );
+
+                        const productSnapshot =
+                            await transaction.get(
+                                productRef
+                            );
+
+                        if (
+                            !productSnapshot.exists()
+                        ) {
+
+                            throw new Error(
+                                "Product not found: " +
+                                String(
+                                    item.name ||
+                                    item.id
+                                ) +
+                                " | ID: " +
+                                productId
+                            );
+
+                        }
+
+                        productDataList.push({
+                            ref: productRef,
+                            snapshot: productSnapshot,
+                            item: item
+                        });
+
+                    }
+
+                    /*
+                     * =================================================
+                     * CHECK STOCK
+                     * =================================================
+                     */
+
+                    for (
+                        const productData
+                        of productDataList
+                    ) {
+
+                        const product =
+                            productData.snapshot.data();
+
+                        const currentStock =
+                            Number(
+                                product.stock
+                            ) || 0;
+
+                        const quantity =
+                            Number(
+                                productData.item.quantity
+                            ) || 1;
+
+                        console.log(
+                            "Stock check:",
+                            productData.item.name,
+                            "Current:",
+                            currentStock,
+                            "Ordered:",
+                            quantity
+                        );
+
+                        if (
+                            currentStock < quantity
+                        ) {
+
+                            throw new Error(
+                                "Not enough stock for: " +
+                                String(
+                                    productData.item.name ||
+                                    productData.item.id
+                                ) +
+                                ". Available: " +
+                                currentStock +
+                                ", Ordered: " +
+                                quantity
+                            );
+
+                        }
+
+                    }
+
+                    /*
+                     * =================================================
+                     * DEDUCT STOCK
+                     * =================================================
+                     */
+
+                    for (
+                        const productData
+                        of productDataList
+                    ) {
+
+                        const product =
+                            productData.snapshot.data();
+
+                        const currentStock =
+                            Number(
+                                product.stock
+                            ) || 0;
+
+                        const quantity =
+                            Number(
+                                productData.item.quantity
+                            ) || 1;
+
+                        const newStock =
+                            currentStock -
+                            quantity;
+
+                        console.log(
+                            "DEDUCTING STOCK:",
+                            productData.item.name,
+                            currentStock,
+                            "->",
+                            newStock
+                        );
+
+                        transaction.update(
+                            productData.ref,
+                            {
+                                stock: newStock,
+                                updatedAt:
+                                    new Date().toISOString()
+                            }
+                        );
+
+                    }
+
+                    /*
+                     * =================================================
+                     * UPDATE ORDER
+                     * =================================================
+                     */
+
+                    transaction.update(
+                        orderRef,
+                        {
+                            status: "Confirmed",
+                            stockDeducted: true,
+                            confirmedAt:
+                                new Date().toISOString(),
+                            updatedAt:
+                                new Date().toISOString()
+                        }
+                    );
+
+                }
+            );
+
+        } else {
+
+            /*
+             * =================================================
+             * OTHER STATUS CHANGES
+             * DO NOT CHANGE STOCK
+             * =================================================
+             */
+
+            await setDoc(
+                doc(
+                    db,
+                    "orders",
+                    String(id)
+                ),
+                {
+                    ...order,
+                    status: status,
+                    updatedAt:
+                        new Date().toISOString()
+                }
+            );
+
+        }
+
+        /*
+         * =====================================================
+         * UPDATE LOCAL ORDER
+         * =====================================================
+         */
+
+        order.status = status;
+
+        if (
+            status === "Confirmed"
+        ) {
+
+            order.stockDeducted = true;
+
+            order.confirmedAt =
+                order.confirmedAt ||
+                new Date().toISOString();
+
+        }
+
+        /*
+         * =====================================================
+         * VERY IMPORTANT:
+         * RELOAD PRODUCTS FROM FIRESTORE
+         * SO ADMIN SHOWS THE REAL STOCK
+         * =====================================================
+         */
+
+        await loadProductsFromFirestore();
+
+        /*
+         * RELOAD ORDERS FROM FIRESTORE
+         */
+
+        await loadOrdersFromFirestore();
+
+        /*
+         * UPDATE LOCAL STORAGE
+         */
+
+        localStorage.setItem(
+            STORAGE.orders,
+            JSON.stringify(orders)
+        );
+
+        /*
+         * REFRESH ADMIN UI
+         */
+
+        renderEverything();
+
+        updateDashboardStats();
+
+        showToast(
+            status === "Confirmed"
+                ? "Order confirmed and stock deducted successfully."
+                : "Order status updated successfully.",
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Update order status error:",
+            error
+        );
+
+        console.error(
+            "Full error:",
+            error
+        );
+
+        /*
+         * Reload real Firestore data
+         */
+
+        await loadProductsFromFirestore();
+
+        await loadOrdersFromFirestore();
+
+        renderEverything();
+
+        updateDashboardStats();
+
+        showToast(
+            error.message ||
+            "Order status could not be updated.",
+            "error"
+        );
+
+    }
+
 }
 /* =========================================================
    COMPLETE ORDER
@@ -3485,11 +4301,12 @@ function renderDashboardShopInfo() {
 
 
     const hasInformation =
-        settings.phone ||
-        settings.whatsapp ||
-        settings.email ||
-        settings.address ||
-        settings.description;
+    settings.phone ||
+    settings.whatsapp ||
+    settings.airtelNumber ||
+    settings.email ||
+    settings.address ||
+    settings.description;
 
 
     if (!hasInformation) {
@@ -3531,6 +4348,13 @@ function renderDashboardShopInfo() {
                    </div>`
                 : ""
             }
+            ${
+    settings.airtelNumber
+    ? `<div>
+        Airtel: ${escapeHtml(settings.airtelNumber)}
+       </div>`
+    : ""
+}
 
             ${
                 settings.email
@@ -3680,6 +4504,8 @@ window.editProduct = editProduct;
 window.deleteProduct = deleteProduct;
 window.deleteCategory = deleteCategory;
 window.completeOrder = completeOrder;
+window.deleteOrder = deleteOrder;
+window.updateOrderStatus = updateOrderStatus;
 
 </script>
 

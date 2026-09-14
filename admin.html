@@ -1073,14 +1073,19 @@
                 </div>
 
                 <button class="nav-item" data-page="categories">
-                    <span class="nav-icon">◇</span>
-                    Categories
-                </button>
+    <span class="nav-icon">◇</span>
+    Categories
+</button>
 
-                <button class="nav-item" data-page="settings">
-                    <span class="nav-icon">⚙</span>
-                    Shop Settings
-                </button>
+<button class="nav-item" data-page="promotions">
+    <span class="nav-icon">%</span>
+    Promotions
+</button>
+
+<button class="nav-item" data-page="settings">
+    <span class="nav-icon">⚙</span>
+    Shop Settings
+</button>
 
                 <div class="nav-title">
                     Account
@@ -1618,7 +1623,187 @@
                     </div>
 
                 </section>
+<section class="page" id="page-promotions">
 
+    <div class="page-header">
+
+        <div>
+            <h1>Promotions</h1>
+            <p>
+                Manage the promotions currently available in your shop.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="settings-panel">
+
+        <div class="settings-section">
+
+            <h3>Current Promotions</h3>
+
+            <p>
+                Add and manage product promotions for your customers.
+            </p>
+
+            <div class="promotion-form">
+
+    <div class="settings-grid">
+
+        <div class="form-group">
+
+            <label>Product</label>
+
+            <select id="promotionProduct">
+
+                <option value="">
+                    Select Product
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Promotion Type</label>
+
+            <select id="promotionType">
+
+                <option value="free_delivery">
+                    Free Delivery
+                </option>
+
+                <option value="discount">
+                    Discount
+                </option>
+                <option value="quantity_discount">
+    Quantity Discount (Buy X Get Discount)
+</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label id="promotionThresholdLabel">
+    Price (RWF)
+</label>
+            <input
+                type="number"
+                id="promotionThreshold"
+                min="0"
+                placeholder="Enter amount"
+            >
+
+        </div>
+        <div class="form-group" id="quantityDiscountFields" style="display:none;">
+
+    <label for="promotionMinQty">Minimum Quantity</label>
+    <input
+        type="number"
+        id="promotionMinQty"
+        min="1"
+        step="1"
+        placeholder="Example: 5"
+    >
+
+    <label for="promotionDiscountValue">
+        Discount Value
+    </label>
+    <input
+        type="number"
+        id="promotionDiscountValue"
+        min="0"
+        step="0.01"
+        placeholder="Example: 10"
+    >
+
+    <label for="promotionDiscountValueType">
+        Discount Type
+    </label>
+    <select id="promotionDiscountValueType">
+        <option value="percentage">Percentage (%)</option>
+        <option value="fixed">Fixed Amount (RWF)</option>
+    </select>
+
+</div>
+<div class="form-group" id="regularDiscountFields" style="display:none;">
+
+    <label for="regularDiscountValue">
+        Discount Value
+    </label>
+
+    <input
+        type="number"
+        id="regularDiscountValue"
+        min="0"
+        step="0.01"
+        placeholder="Example: 10"
+    >
+
+    <label for="regularDiscountValueType">
+        Discount Type
+    </label>
+
+    <select id="regularDiscountValueType">
+        <option value="percentage">Percentage (%)</option>
+        <option value="fixed">Fixed Amount (RWF)</option>
+    </select>
+
+</div>
+
+        <div class="form-group full">
+
+            <label>Promotion Message</label>
+
+            <textarea
+                id="promotionMessage"
+                placeholder="Enter promotion message"
+            ></textarea>
+
+        </div>
+
+    </div>
+
+
+    <button
+        type="button"
+        class="btn btn-primary"
+        id="addPromotionBtn"
+    >
+        Add Promotion
+    </button>
+
+</div>
+
+<button
+    type="button"
+    class="btn btn-danger"
+    id="deleteAllPromotionsBtn"
+    style="margin-top:20px;"
+>
+    Delete All Promotions
+</button>
+
+<div
+    id="promotionsList"
+    style="margin-top:25px;"
+>
+
+    <div class="empty-message">
+        No promotions configured yet.
+    </div>
+
+</div>
+        </div>
+
+    </div>
+
+</section>
             </div>
 
         </main>
@@ -1808,6 +1993,12 @@
 // =========================================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
     getFirestore,
@@ -1838,7 +2029,9 @@ const firebaseConfig = {
 // INITIALIZE FIREBASE
 // =========================================================
 
-const  firebaseApp = initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
+
+const auth = getAuth(firebaseApp);
 
 const db = getFirestore(firebaseApp);
 
@@ -1867,8 +2060,12 @@ const STORAGE = {
     categories: "vazora_categories",
     settings: "vazora_shop_settings",
     orders: "vazora_orders",
-    loggedIn: "vazora_admin_logged_in"
 };
+const PROMOTIONS_KEY = "vazora_promotions";
+
+let promotions = JSON.parse(
+    localStorage.getItem(PROMOTIONS_KEY) || "[]"
+);
 
 
 /* =========================================================
@@ -1896,7 +2093,12 @@ let settings = JSON.parse(
         email: "",
         address: "",
         description: "",
-        logo: ""
+
+companyCode: "",
+
+airtelNumber: "",
+
+logo: ""
     })
 );
 
@@ -1923,7 +2125,53 @@ const productImagePreview = document.getElementById("productImagePreview");
 const productPreviewImage = document.getElementById("productPreviewImage");
 
 const shopLogoInput = document.getElementById("shopLogo");
+const promotionProduct =
+    document.getElementById("promotionProduct");
 
+const promotionType =
+    document.getElementById("promotionType");
+
+const promotionThreshold =
+    document.getElementById("promotionThreshold");
+
+const promotionMessage =
+    document.getElementById("promotionMessage");
+
+const promotionThresholdGroup =
+    promotionThreshold?.closest(".form-group");
+
+const promotionMinQtyGroup =
+    document.getElementById("promotionMinQtyGroup");
+
+const promotionDiscountValueGroup =
+    document.getElementById("promotionDiscountValueGroup");
+
+const promotionDiscountTypeGroup =
+    document.getElementById("promotionDiscountTypeGroup");
+
+const promotionMinQty =
+    document.getElementById("promotionMinQty");
+
+const promotionDiscountValue =
+    document.getElementById("promotionDiscountValue");
+
+const promotionDiscountValueType =
+    document.getElementById("promotionDiscountValueType");
+
+    const regularDiscountValue =
+    document.getElementById("regularDiscountValue");
+
+const regularDiscountValueType =
+    document.getElementById("regularDiscountValueType");
+
+const addPromotionBtn =
+    document.getElementById("addPromotionBtn");
+
+const promotionsList =
+    document.getElementById("promotionsList");
+    
+const deleteAllPromotionsBtn =
+    document.getElementById("deleteAllPromotionsBtn");
 
 /* =========================================================
    LOGIN
@@ -1939,36 +2187,47 @@ const shopLogoInput = document.getElementById("shopLogo");
    For production, replace this with real backend authentication.
 */
 
-loginForm.addEventListener("submit", function(e) {
+/* =========================================================
+   LOGIN
+========================================================= */
+
+loginForm.addEventListener("submit", async function(e) {
 
     e.preventDefault();
 
-    const username =
+    const email =
         document.getElementById("username").value.trim();
 
     const password =
         document.getElementById("password").value;
 
-    if (
-        username === "admin" &&
-        password === "admin123"
-    ) {
+    loginError.style.display = "none";
 
-        localStorage.setItem(
-            STORAGE.loggedIn,
-            "true"
+    try {
+
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
         );
 
         showApp();
 
-    } else {
+    } catch (error) {
 
-        loginError.style.display = "block";
+    console.error(
+        "Admin login error:",
+        error.code,
+        error.message
+    );
 
-    }
+    loginError.textContent =
+        error.code + ": " + error.message;
 
+    loginError.style.display = "block";
+
+}
 });
-
 
 document.getElementById("showPassword")
     .addEventListener("click", function() {
@@ -1992,18 +2251,27 @@ document.getElementById("showPassword")
 
 
 document.getElementById("logoutBtn")
-    .addEventListener("click", function() {
+    .addEventListener("click", async function() {
 
-        localStorage.removeItem(STORAGE.loggedIn);
+        try {
 
-        app.style.display = "none";
-        loginScreen.style.display = "flex";
+            await signOut(auth);
 
-        document.getElementById("password").value = "";
+            app.style.display = "none";
+            loginScreen.style.display = "flex";
+
+            document.getElementById("password").value = "";
+
+        } catch (error) {
+
+            console.error(
+                "Logout error:",
+                error
+            );
+
+        }
 
     });
-
-
 async function showApp() {
 
     loginScreen.style.display = "none";
@@ -2012,28 +2280,38 @@ async function showApp() {
     renderEverything();
 
     await Promise.all([
-        loadProductsFromFirestore(),
-        loadCategoriesFromFirestore(),
-        loadSettingsFromFirestore(),
-        loadOrdersFromFirestore()
-    ]);
+    loadProductsFromFirestore(),
+    loadCategoriesFromFirestore(),
+    loadSettingsFromFirestore(),
+    loadOrdersFromFirestore(),
+    loadPromotionsFromFirestore()
+]);
 
     renderEverything();
-
+    
+populatePromotionProducts();
+renderPromotions();
 }
 
 
 /* =========================================================
-   CHECK LOGIN
+   CHECK FIREBASE AUTHENTICATION
 ========================================================= */
 
-if (
-    localStorage.getItem(STORAGE.loggedIn) === "true"
-) {
+onAuthStateChanged(auth, function(user) {
 
-    showApp();
+    if (user) {
 
-}
+        showApp();
+
+    } else {
+
+        app.style.display = "none";
+        loginScreen.style.display = "flex";
+
+    }
+
+});
 
 
 /* =========================================================
@@ -2293,7 +2571,731 @@ closeProductModal();
 
 });
 
+/* =========================================================
+   PROMOTIONS
+========================================================= */
+async function loadPromotionsFromFirestore() {
 
+    try {
+
+        const snapshot = await getDocs(
+            collection(db, "promotions")
+        );
+
+        promotions = snapshot.docs.map(
+            docSnapshot => docSnapshot.data()
+        );
+
+        localStorage.setItem(
+            PROMOTIONS_KEY,
+            JSON.stringify(promotions)
+        );
+
+        console.log(
+            "Promotions loaded from Firestore:",
+            promotions.length
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Firestore promotions load error:",
+            error
+        );
+
+        showToast(
+            "Promotions could not be loaded online.",
+            "error"
+        );
+    }
+}
+
+async function savePromotions() {
+
+    try {
+
+        /* =========================
+           SAVE TO FIRESTORE
+        ========================= */
+
+        for (const promotion of promotions) {
+
+            await setDoc(
+                doc(
+                    db,
+                    "promotions",
+                    String(promotion.id)
+                ),
+                promotion
+            );
+
+        }
+
+
+        /* =========================
+           LOCALSTORAGE BACKUP
+        ========================= */
+
+        localStorage.setItem(
+            PROMOTIONS_KEY,
+            JSON.stringify(promotions)
+        );
+
+
+        console.log(
+            "Promotions saved to Firestore:",
+            promotions
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Firestore promotions save error:",
+            error
+        );
+
+        showToast(
+            "Promotion could not be saved online.",
+            "error"
+        );
+
+        throw error;
+    }
+}
+function togglePromotionFields() {
+
+    const type = promotionType.value;
+    const promotionThresholdLabel =
+    document.getElementById("promotionThresholdLabel");
+
+if (promotionThresholdLabel) {
+    promotionThresholdLabel.textContent =
+        "Price (RWF)";
+}
+
+    /*
+     * Threshold is used by:
+     * Free Delivery
+     * Discount
+     */
+    if (promotionThresholdGroup) {
+        promotionThresholdGroup.style.display =
+            (type === "free_delivery" || type === "discount")
+                ? "block"
+                : "none";
+    }
+
+
+    /*
+     * Quantity Discount fields
+     */
+    const quantityDiscountFields =
+        document.getElementById("quantityDiscountFields");
+
+    if (quantityDiscountFields) {
+
+        quantityDiscountFields.style.display =
+            type === "quantity_discount"
+                ? "block"
+                : "none";
+    }
+
+
+    /*
+     * Regular Discount fields
+     * (Discount Value / Discount Type for the "discount" type)
+     */
+    const regularDiscountFields =
+        document.getElementById("regularDiscountFields");
+
+    if (regularDiscountFields) {
+
+        regularDiscountFields.style.display =
+            type === "discount"
+                ? "block"
+                : "none";
+    }
+}
+
+promotionType.addEventListener(
+    "change",
+    togglePromotionFields
+);
+
+togglePromotionFields();
+
+
+function populatePromotionProducts() {
+
+    promotionProduct.innerHTML =
+        `<option value="">Select product</option>`;
+
+    products.forEach(product => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = product.id;
+
+        option.textContent =
+            product.name;
+
+        promotionProduct.appendChild(option);
+
+    });
+
+}
+
+
+function renderPromotions() {
+
+    if (!promotionsList) return;
+
+    promotionsList.innerHTML = "";
+
+    if (promotions.length === 0) {
+
+        promotionsList.innerHTML =
+            `<p class="empty-state">
+                No promotions added yet.
+            </p>`;
+
+        return;
+    }
+
+
+    promotions.forEach(promotion => {
+
+        const product =
+            products.find(
+                p => p.id === promotion.productId
+            );
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "promotion-item";
+
+        let typeLabel = "Discount";
+
+        if (promotion.type === "free_delivery") {
+            typeLabel = "Free Delivery";
+        } else if (promotion.type === "quantity_discount") {
+            typeLabel = "Quantity Discount";
+        }
+
+        const discountInfo =
+            (promotion.type === "quantity_discount" ||
+             promotion.type === "discount") &&
+            promotion.discountValue
+            ?
+            `<small>
+                ${
+                    promotion.type === "quantity_discount"
+                    ? `Buy ${promotion.minQty}+ units, get `
+                    : `Get `
+                }
+                ${
+                    promotion.discountValueType === "percentage"
+                    ? promotion.discountValue + "% off"
+                    : formatRWF(promotion.discountValue) + " off"
+                }
+            </small><br>`
+            : "";
+
+        item.innerHTML = `
+            <div>
+                <strong>
+                    ${product ? product.name : "Unknown product"}
+                </strong>
+
+                <p>
+                    ${typeLabel}
+                </p>
+
+                ${discountInfo}
+
+                <small>
+                    ${promotion.message || ""}
+                </small>
+            </div>
+
+            <div style="display:flex;gap:8px;">
+
+    <button
+        type="button"
+        onclick="editPromotion('${promotion.id}')"
+    >
+        Edit
+    </button>
+
+    <button
+        type="button"
+        onclick="deletePromotion('${promotion.id}')"
+    >
+        Delete
+    </button>
+
+</div>
+        `;
+
+        promotionsList.appendChild(item);
+
+    });
+
+}
+addPromotionBtn.addEventListener(
+    "click",
+    async function() {
+        const productId =
+            promotionProduct.value;
+
+        const type =
+            promotionType.value;
+
+       const threshold =
+    Number(
+        promotionThreshold.value
+    );
+
+const selectedProduct =
+    products.find(
+        product =>
+            String(product.id) ===
+            String(productId)
+    );
+
+if (!selectedProduct) {
+
+    showToast(
+        "Selected product was not found.",
+        "error"
+    );
+
+    return;
+}
+
+const originalProductPrice =
+    Number(selectedProduct.price) || 0;
+
+        const minQty =
+            Number(
+                promotionMinQty.value
+            );
+
+        const discountValue =
+            Number(
+                promotionDiscountValue.value
+            );
+
+        const discountValueType =
+            promotionDiscountValueType.value;
+
+            const regularDiscount =
+    Number(
+        regularDiscountValue.value
+    );
+
+const regularDiscountType =
+    regularDiscountValueType.value;
+
+        const message =
+            promotionMessage.value.trim();
+
+
+        /* =====================================================
+           BASIC VALIDATION
+        ===================================================== */
+
+        if (!productId) {
+
+            showToast(
+                "Please select a product.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!type) {
+
+            showToast(
+                "Please select a promotion type.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /* =====================================================
+           DISCOUNT VALIDATION
+        ===================================================== */
+
+       if (threshold <= 0) {
+
+    showToast(
+        "Please enter the original product price.",
+        "error"
+    );
+
+    return;
+}
+
+if (threshold !== originalProductPrice) {
+
+    showToast(
+        "Price must exactly match the selected product price.",
+        "error"
+    );
+
+    return;
+}
+if (
+    type === "discount" &&
+    regularDiscount <= 0
+) {
+
+    showToast(
+        "Please enter a valid discount value.",
+        "error"
+    );
+
+    return;
+}
+
+if (
+    type === "discount" &&
+    regularDiscountType === "percentage" &&
+    regularDiscount > 100
+) {
+
+    showToast(
+        "Percentage discount cannot exceed 100%.",
+        "error"
+    );
+
+    return;
+}
+
+
+        /* =====================================================
+           QUANTITY DISCOUNT VALIDATION
+        ===================================================== */
+
+        if (type === "quantity_discount") {
+
+            if (minQty <= 0) {
+
+                showToast(
+                    "Please enter a valid minimum quantity.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (discountValue <= 0) {
+
+                showToast(
+                    "Please enter a valid discount value.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (!discountValueType) {
+
+                showToast(
+                    "Please select a discount type.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (
+                discountValueType === "percentage" &&
+                discountValue > 100
+            ) {
+
+                showToast(
+                    "Percentage discount cannot exceed 100%.",
+                    "error"
+                );
+
+                return;
+            }
+        }
+
+
+        /* =====================================================
+           CREATE PROMOTION
+        ===================================================== */
+
+        const promotion = {
+
+            id:
+                "promo_" +
+                Date.now(),
+
+            productId,
+
+            type,
+
+            threshold,
+
+            minQty,
+
+          discountValue:
+    type === "discount"
+        ? regularDiscount
+        : discountValue,
+
+discountValueType:
+    type === "discount"
+        ? regularDiscountType
+        : discountValueType,
+            message,
+
+            createdAt:
+                new Date().toISOString()
+
+        };
+
+
+        const editingId =
+    addPromotionBtn.dataset.editingId;
+
+if (editingId) {
+
+    const index =
+        promotions.findIndex(
+            item => item.id === editingId
+        );
+
+    if (index !== -1) {
+
+        promotion.id =
+            editingId;
+
+        promotions[index] =
+            promotion;
+
+    }
+
+} else {
+
+    promotions.unshift(
+        promotion
+    );
+}
+
+
+        try {
+
+    await savePromotions();
+
+    renderPromotions();
+
+} catch (error) {
+
+    console.error(
+        "Promotion save error:",
+        error
+    );
+
+    promotions =
+        promotions.filter(
+            item =>
+                item.id !== promotion.id
+        );
+
+    renderPromotions();
+
+    showToast(
+        "Promotion could not be saved online.",
+        "error"
+    );
+
+    return;
+}
+
+        /* =====================================================
+           RESET FORM
+        ===================================================== */
+
+        promotionProduct.value = "";
+
+promotionType.value = "";
+
+promotionThreshold.value = "";
+
+promotionMinQty.value = "";
+
+promotionDiscountValue.value = "";
+
+promotionDiscountValueType.value =
+    "percentage";
+    regularDiscountValue.value = "";
+
+regularDiscountValueType.value =
+    "percentage";
+
+promotionMessage.value = "";
+
+togglePromotionFields();
+
+        showToast(
+            "Promotion added successfully.",
+            "success"
+        );
+
+    }
+);
+function editPromotion(id) {
+
+    const promotion =
+        promotions.find(
+            promotion => promotion.id === id
+        );
+
+    if (!promotion) {
+        showToast(
+            "Promotion not found.",
+            "error"
+        );
+        return;
+    }
+
+    promotionProduct.value =
+        promotion.productId || "";
+
+    promotionType.value =
+        promotion.type || "free_delivery";
+
+    promotionThreshold.value =
+        promotion.threshold || "";
+
+    promotionMinQty.value =
+        promotion.minQty || "";
+
+    promotionDiscountValue.value =
+        promotion.discountValue || "";
+
+    promotionDiscountValueType.value =
+        promotion.discountValueType || "percentage";
+
+    regularDiscountValue.value =
+        promotion.discountValue || "";
+
+    regularDiscountValueType.value =
+        promotion.discountValueType || "percentage";
+
+    promotionMessage.value =
+        promotion.message || "";
+
+    togglePromotionFields();
+
+    addPromotionBtn.textContent =
+        "Update Promotion";
+
+    addPromotionBtn.dataset.editingId =
+        id;
+    addPromotionBtn.dataset.editingId = id;
+
+    document
+        .getElementById("page-promotions")
+        ?.scrollIntoView({
+            behavior: "smooth"
+        });
+
+    showToast(
+        "Promotion loaded for editing.",
+        "success"
+    );
+}
+
+async function deletePromotion(id) {
+
+    const confirmed = confirm("Delete this promotion?");
+
+    if (!confirmed) return;
+
+
+    try {
+
+        /* =========================
+           DELETE FROM FIRESTORE
+        ========================= */
+
+        await deleteDoc(
+            doc(
+                db,
+                "promotions",
+                String(id)
+            )
+        );
+
+
+        /* =========================
+           DELETE FROM LOCAL ARRAY
+        ========================= */
+
+        promotions = promotions.filter(
+            promotion => promotion.id !== id
+        );
+
+
+        /* =========================
+           UPDATE LOCALSTORAGE
+        ========================= */
+
+        localStorage.setItem(
+            PROMOTIONS_KEY,
+            JSON.stringify(promotions)
+        );
+
+
+        /* =========================
+           REFRESH UI
+        ========================= */
+
+        renderPromotions();
+
+
+        showToast(
+            "Promotion deleted successfully.",
+            "success"
+        );
+
+
+        console.log(
+            "Promotion deleted from Firestore:",
+            id
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Firestore promotion delete error:",
+            error
+        );
+
+
+        showToast(
+            "Promotion could not be deleted online.",
+            "error"
+        );
+
+    }
+}
 /* =========================================================
    FILE TO BASE64
 ========================================================= */
@@ -4402,6 +5404,8 @@ function renderEverything() {
     loadSettings();
 
     renderDashboardShopInfo();
+    populatePromotionProducts();
+renderPromotions();
 
 }
 
@@ -4506,6 +5510,74 @@ window.deleteCategory = deleteCategory;
 window.completeOrder = completeOrder;
 window.deleteOrder = deleteOrder;
 window.updateOrderStatus = updateOrderStatus;
+window.deletePromotion = deletePromotion;
+window.editPromotion = editPromotion;
+
+deleteAllPromotionsBtn?.addEventListener(
+    "click",
+    async function () {
+
+        if (promotions.length === 0) {
+            showToast(
+                "No promotions to delete.",
+                "error"
+            );
+            return;
+        }
+
+        const confirmed = confirm(
+            "Delete ALL promotions? This action cannot be undone."
+        );
+
+        if (!confirmed) return;
+
+        try {
+
+            for (const promotion of promotions) {
+
+                await deleteDoc(
+                    doc(
+                        db,
+                        "promotions",
+                        String(promotion.id)
+                    )
+                );
+
+            }
+
+            promotions = [];
+
+            localStorage.setItem(
+                PROMOTIONS_KEY,
+                JSON.stringify(promotions)
+            );
+
+            renderPromotions();
+
+            showToast(
+                "All promotions deleted successfully.",
+                "success"
+            );
+
+            console.log(
+                "All promotions deleted from Firestore."
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Delete all promotions error:",
+                error
+            );
+
+            showToast(
+                "Promotions could not be deleted.",
+                "error"
+            );
+        }
+    }
+);
+
 
 </script>
 

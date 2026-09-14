@@ -1581,7 +1581,7 @@ footer{
 
     <div class="info-card">
 
-        <h3>Phone</h3>
+        <h3>VAZORA CODE TO PAY</h3>
 
         <p id="shopPhone">
             Not provided
@@ -1769,7 +1769,7 @@ footer{
 
         <button
     class="whatsapp-btn"
-    onclick="openWhatsAppCheckout()"
+    onclick="orderOnWhatsApp()"
 >
     Order via WhatsApp
 </button>
@@ -1912,17 +1912,13 @@ footer{
      VAZORA SHOP SOLUTION
 ===================================================== -->
 
-<div
-    class="modal-overlay"
-    id="paymentModal"
->
-
-    <div class="modal-content payment-modal-content">
+<div class="modal-overlay" id="paymentModal">
+    <div class="modal">
 
         <!-- CLOSE BUTTON -->
         <button
             type="button"
-            class="modal-close"
+            class="close-btn"
             onclick="closeModal('paymentModal')">
             &times;
         </button>
@@ -2084,15 +2080,11 @@ footer{
      VAZORA SHOP SOLUTION
 ===================================================== -->
 
-<div
-    class="modal-overlay"
-    id="orderConfirmationModal"
->
-    <div class="modal-content payment-modal-content">
-
+<div class="modal-overlay" id="orderConfirmationModal">
+    <div class="modal">
         <button
             type="button"
-            class="modal-close"
+            class="close-btn"
             onclick="closeModal('orderConfirmationModal')">
             &times;
         </button>
@@ -2494,7 +2486,7 @@ document.getElementById("shopAirtel").textContent =
     settings.airtelNumber || "Not provided";
 
     document.getElementById("footerPhone").textContent =
-        "Phone: " +
+        "vazora code: " +
         (settings.phone || "Not provided");
 
 
@@ -3066,28 +3058,90 @@ function updateCartCount(){
 
 function getCartTotal(){
 
-    return cart.reduce(
-        (total,item) => {
+    const promotions =
+        JSON.parse(
+            localStorage.getItem(
+                "vazora_promotions"
+            ) || "[]"
+        );
 
-            const product =
-                findProduct(item.id);
+    let total = 0;
 
-            if(!product)
-                return total;
+    cart.forEach(item => {
 
+        const product =
+            findProduct(item.id);
 
-            return total +
-                (
-                    Number(product.price) *
-                    item.quantity
-                );
+        if(!product){
+            return;
+        }
 
-        },
-        0
-    );
+        const price =
+            Number(product.price) || 0;
 
+        const quantity =
+            Number(item.quantity) || 1;
+
+        const subtotal =
+            price * quantity;
+
+        total += subtotal;
+
+        const promotion =
+            promotions.find(
+                promo =>
+                    String(promo.productId) ===
+                    String(item.id)
+            );
+
+        if(
+    promotion &&
+    (
+        promotion.type === "discount" ||
+        promotion.type === "quantity_discount"
+    )
+){
+
+    const discountValue =
+        Number(
+            promotion.discountValue
+        ) || 0;
+
+    const minQty =
+        Number(
+            promotion.minQty
+        ) || 0;
+
+    const quantityDiscountApplies =
+        promotion.type === "quantity_discount"
+            ? quantity >= minQty
+            : true;
+
+    if(quantityDiscountApplies){
+
+        if(
+            promotion.discountValueType ===
+            "percentage"
+        ){
+
+            total -=
+                subtotal *
+                (discountValue / 100);
+
+        } else {
+
+            total -=
+                discountValue *
+                quantity;
+
+        }
+    }
 }
 
+    });
+
+    return Math.max(0, total);
+}
 
 /* =========================
    RENDER CART
@@ -3638,6 +3692,15 @@ function renderCheckoutOrderSummary(){
     container.innerHTML = "";
 
     let total = 0;
+    let discount = 0;
+let freeDelivery = false;
+
+const promotions =
+    JSON.parse(
+        localStorage.getItem(
+            "vazora_promotions"
+        ) || "[]"
+    );
 
     cart.forEach(item => {
 
@@ -3657,6 +3720,99 @@ function renderCheckoutOrderSummary(){
             price * quantity;
 
         total += subtotal;
+
+        const promotion =
+    promotions.find(
+        promo =>
+            String(promo.productId) ===
+            String(item.id)
+    );
+
+if(promotion){
+
+    const discountValue =
+        Number(
+            promotion.discountValue
+        ) || 0;
+
+    /* =====================================================
+       REGULAR DISCOUNT
+    ===================================================== */
+
+    if(
+        promotion.type ===
+        "discount"
+    ){
+
+        if(
+            promotion.discountValueType ===
+            "percentage"
+        ){
+
+            discount +=
+                subtotal *
+                (discountValue / 100);
+
+        } else {
+
+            discount +=
+                discountValue *
+                quantity;
+
+        }
+    }
+
+
+    /* =====================================================
+       QUANTITY DISCOUNT
+    ===================================================== */
+
+    if(
+        promotion.type ===
+        "quantity_discount"
+    ){
+
+        const minQty =
+            Number(
+                promotion.minQty
+            ) || 0;
+
+        if(
+            quantity >= minQty
+        ){
+
+            if(
+                promotion.discountValueType ===
+                "percentage"
+            ){
+
+                discount +=
+                    subtotal *
+                    (discountValue / 100);
+
+            } else {
+
+                discount +=
+                    discountValue *
+                    quantity;
+
+            }
+        }
+    }
+
+
+    /* =====================================================
+       FREE DELIVERY
+    ===================================================== */
+
+    if(
+        promotion.type ===
+        "free_delivery"
+    ){
+
+        freeDelivery = true;
+    }
+}
 
         const div =
             document.createElement("div");
@@ -3696,8 +3852,58 @@ function renderCheckoutOrderSummary(){
         container.appendChild(div);
     });
 
-    totalElement.textContent =
-        `${total.toLocaleString()} RWF`;
+   const finalTotal =
+    Math.max(
+        0,
+        total - discount
+    );
+
+totalElement.innerHTML = `
+    ${
+        discount > 0
+        ? `
+            <div>
+                <small>
+                    Original Total
+                </small>
+                <del>
+                    ${total.toLocaleString()} RWF
+                </del>
+            </div>
+
+            <div>
+                <small>
+                    Discount
+                </small>
+                <strong>
+                    -${discount.toLocaleString()} RWF
+                </strong>
+            </div>
+        `
+        : ""
+    }
+
+    ${
+        freeDelivery
+        ? `
+            <div class="free-delivery-message">
+                Watsindiye Free Delivery!
+                Uyu munsi tubikugereza ku rugo.
+            </div>
+        `
+        : ""
+    }
+
+    <div>
+        <strong>
+            Total
+        </strong>
+
+        <strong>
+            ${finalTotal.toLocaleString()} RWF
+        </strong>
+    </div>
+`;
 }
 
 /* =========================
@@ -3816,14 +4022,68 @@ document
 
     /* =========================
        CALCULATE TOTAL
-    ========================= */
+    ========================= *const total =
+    getCartTotal();
 
-    const total =
-        orderItems.reduce(
-            (sum, item) =>
-                sum + item.subtotal,
-            0
+/* =========================
+   APPLY PROMOTION
+========================= */
+
+const PROMOTIONS_KEY =
+    "vazora_promotions";
+
+const promotions =
+    JSON.parse(
+        localStorage.getItem(
+            PROMOTIONS_KEY
+        ) || "[]"
+    );
+
+let discount = 0;
+let freeDelivery = false;
+
+orderItems.forEach(item => {
+
+    const productPromotion =
+        promotions.find(
+            promotion =>
+                String(promotion.productId) ===
+                String(item.id)
         );
+
+    if (!productPromotion) {
+        return;
+    }
+
+    if (
+        productPromotion.type ===
+        "free_delivery"
+    ) {
+        freeDelivery = true;
+    }
+});
+
+const originalTotal =
+    orderItems.reduce(
+        (sum, item) =>
+            sum + item.subtotal,
+        0
+    );
+
+const total =
+    getCartTotal();
+
+const finalTotal =
+    Math.max(
+        0,
+        total
+    );
+
+discount =
+    Math.max(
+        0,
+        originalTotal - finalTotal
+    );
 
 
     /* =========================
@@ -3851,7 +4111,16 @@ document
             orderItems,
 
         total:
-            total,
+    finalTotal,
+
+originalTotal:
+    total,
+
+discount:
+    discount,
+
+freeDelivery:
+    freeDelivery,
 
         status:
             "Pending Payment",
@@ -3886,6 +4155,28 @@ document
 ========================= */
 
 closeModal("checkoutModal");
+
+/* SHOW PAYMENT TOTAL */
+
+document.getElementById(
+    "paymentOrderTotal"
+).textContent =
+    finalTotal.toLocaleString() + " RWF";
+
+/* SHOW ADMIN FREE DELIVERY */
+
+const freeDeliveryMessage =
+    document.getElementById(
+        "freeDeliveryMessage"
+    );
+
+if(freeDeliveryMessage){
+
+    freeDeliveryMessage.style.display =
+        pendingOrder.freeDelivery
+        ? "block"
+        : "none";
+}
 
 /* Open Payment Method */
 document
@@ -4001,12 +4292,75 @@ async function orderOnWhatsApp(){
 
 
     const total =
-        orderItems.reduce(
-            (sum, item) =>
-                sum + item.subtotal,
-            0
+    getCartTotal();
+
+const promotions =
+    JSON.parse(
+        localStorage.getItem(
+            "vazora_promotions"
+        ) || "[]"
+    );
+
+let discount = 0;
+let freeDelivery = false;
+
+orderItems.forEach(item => {
+
+    const promotion =
+        promotions.find(
+            promo =>
+                String(promo.productId) ===
+                String(item.id)
         );
 
+    if(!promotion){
+        return;
+    }
+
+    if(
+        promotion.type ===
+        "discount"
+    ){
+
+        const discountValue =
+            Number(
+                promotion.discountValue
+            ) || 0;
+
+        if(
+            promotion.discountValueType ===
+            "percentage"
+        ){
+
+            discount +=
+                item.subtotal *
+                (discountValue / 100);
+
+        } else {
+
+            discount +=
+                discountValue *
+                item.quantity;
+
+        }
+    }
+
+    if(
+        promotion.type ===
+        "free_delivery"
+    ){
+
+        freeDelivery = true;
+
+    }
+
+});
+
+const finalTotal =
+    Math.max(
+        0,
+        total - discount
+    );
 
     /* =========================
        GET WHATSAPP NUMBER
@@ -4064,24 +4418,85 @@ Address: ${customerAddress}
 
 
     orderItems.forEach(
-        (item, index) => {
+    (item, index) => {
 
-            message +=
+        const productPromotion =
+            promotions.find(
+                promo =>
+                    String(promo.productId) ===
+                    String(item.id)
+            );
+
+        let itemDiscount = 0;
+
+        if (
+            productPromotion &&
+            productPromotion.type === "discount"
+        ) {
+
+            const discountValue =
+                Number(
+                    productPromotion.discountValue
+                ) || 0;
+
+            if (
+                productPromotion.discountValueType ===
+                "percentage"
+            ) {
+
+                itemDiscount =
+                    item.subtotal *
+                    (discountValue / 100);
+
+            } else {
+
+                itemDiscount =
+                    discountValue *
+                    item.quantity;
+            }
+        }
+
+        const itemFinalSubtotal =
+            Math.max(
+                0,
+                item.subtotal - itemDiscount
+            );
+
+        message +=
 `
 ${index + 1}. ${item.name}
    Quantity: ${item.quantity}
    Price: ${formatMoney(item.price)}
    Subtotal: ${formatMoney(item.subtotal)}
-`;
-
-        }
-    );
-
-
-    message +=
+${
+    itemDiscount > 0
+    ? `   Discount: -${formatMoney(itemDiscount)}
+   Final: ${formatMoney(itemFinalSubtotal)}
 `
-*TOTAL: ${formatMoney(total)}*
+    : ""
+}`;
+    }
+);
 
+
+   message +=
+`
+${
+    discount > 0
+    ? `*Original Total: ${formatMoney(total)}*
+*Discount: -${formatMoney(discount)}*
+`
+    : ""
+}
+*TOTAL: ${formatMoney(finalTotal)}*
+
+${
+    freeDelivery
+    ? `Watsindiye Free Delivery!
+Uyu munsi tubikugereza ku rugo.
+`
+    : ""
+}
 Note: ${
     customerNote ||
     "No additional note."
@@ -4107,6 +4522,19 @@ try {
         doc(db, "orders", order.id),
         order
     );
+    localStorage.removeItem(
+    "vazora_customer_cart"
+);
+
+cart = [];
+
+updateCartCount();
+
+renderCart();
+
+localStorage.removeItem(
+    "vazoraPendingOrder"
+);
 
     console.log(
         "WhatsApp order saved to Firestore:",
@@ -4254,16 +4682,12 @@ document
 
         <h3>
             ${ussdCode}
-        </h3>
-
-        <p>
+        </h3><p>
             Amount:
             <strong>
                 ${amount.toLocaleString()} RWF
             </strong>
-        </p>
-
-        <button
+        </p><button
             type="button"
             id="codePaidBtn"
             class="payment-confirm-btn"
@@ -4372,18 +4796,6 @@ if(selectedPaymentMethod === "Airtel"){
                 ${amount.toLocaleString()} RWF
             </strong>
         </p>
-
-        ${
-            amount >= 15000
-            ? `
-                <p>
-                    <strong>
-                        Watsindiye Free Delivery! Uyu munsi tubikugereza ku rugo.
-                    </strong>
-                </p>
-            `
-            : ""
-        }
 
         <button
             type="button"
@@ -4494,18 +4906,6 @@ if(selectedPaymentMethod === "MTN"){
                 ${amount.toLocaleString()} RWF
             </strong>
         </p>
-
-        ${
-            amount >= 15000
-            ? `
-                <p>
-                    <strong>
-                        Watsindiye Free Delivery! Uyu munsi tubikugereza ku rugo.
-                    </strong>
-                </p>
-            `
-            : ""
-        }
 
         <button
             type="button"
@@ -4825,13 +5225,18 @@ document
                 }
             );
 
-            localStorage.removeItem(
-                "vazora_customer_cart"
-            );
+           localStorage.removeItem(
+    "vazora_customer_cart"
+);
 
-            localStorage.removeItem(
-                "vazoraPendingOrder"
-            );
+cart = [];
+
+updateCartCount();
+renderCart();
+
+localStorage.removeItem(
+    "vazoraPendingOrder"
+);
 
             showToast(
                 "Order sent successfully."

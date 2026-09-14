@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAZORA SHOP SOLUTION — Promotions</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2E8B34;
+            --primary-dark: #256B29;
+            --bg: #FFFFFF;
+            --text: #0B1F3A;
+            --muted: #6B7280;
+            --border: #E5E7EB;
+            --danger: #DC2626;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #F3F4F6;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 22px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 20px;
+        }
+
+        header p {
+            font-size: 13px;
+            opacity: .9;
+            margin-top: 5px;
+        }
+
+        .content {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .promo-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .promo-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            background: #eafaec;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .promo-body {
+            flex: 1;
+        }
+
+        .promo-product {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .promo-type {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: var(--primary);
+            background: #eafaec;
+            padding: 3px 9px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+        }
+
+        .promo-detail {
+            font-size: 14px;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .promo-message {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 60px 15px;
+            color: var(--muted);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 15px;
+            color: var(--muted);
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>VAZORA SHOP SOLUTION</h1>
+    <p>Promotions available today</p>
+</header>
+
+<div class="content" id="promotionsContainer">
+    <div class="loading">Loading promotions...</div>
+</div>
+
+<script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import {
+        getFirestore,
+        collection,
+        getDocs
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAGybD0NNSaJGcDNR-Z8zXK5x-zOgUMhR0",
+        authDomain: "vazora-shop-solution.firebaseapp.com",
+        projectId: "vazora-shop-solution",
+        storageBucket: "vazora-shop-solution.firebasestorage.app",
+        messagingSenderId: "566814054729",
+        appId: "1:566814054729:web:5589e767d484658c20a298"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getFirestore(firebaseApp);
+
+    const container = document.getElementById("promotionsContainer");
+
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function formatRWF(amount) {
+        return Number(amount || 0).toLocaleString("en-US") + " RWF";
+    }
+
+    async function loadPromotions() {
+
+        try {
+
+            const [productsSnapshot, promotionsSnapshot] = await Promise.all([
+                getDocs(collection(db, "products")),
+                getDocs(collection(db, "promotions"))
+            ]);
+
+            const products = {};
+
+            productsSnapshot.forEach(docSnapshot => {
+                products[docSnapshot.id] = docSnapshot.data();
+            });
+
+            const promotions = [];
+
+            promotionsSnapshot.forEach(docSnapshot => {
+                promotions.push({ id: docSnapshot.id, ...docSnapshot.data() });
+            });
+
+            promotions.sort((a, b) =>
+                new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+            );
+
+            renderPromotions(promotions, products);
+
+        } catch (error) {
+
+            console.error("Error loading promotions:", error);
+
+            container.innerHTML = `
+                <div class="empty-message">
+                    Could not load promotions right now. Please try again later.
+                </div>
+            `;
+
+        }
+
+    }
+
+    function renderPromotions(promotions, products) {
+
+        if (promotions.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty-message">
+                    No promotions available today. Check back soon!
+                </div>
+            `;
+
+            return;
+        }
+
+        container.innerHTML = promotions.map(promotion => {
+
+            const product = products[promotion.productId];
+            const productName = product ? product.name : "A product in our shop";
+
+            let icon = "🏷️";
+            let typeLabel = "Discount";
+            let detailLine = "";
+
+            if (promotion.type === "free_delivery") {
+
+                icon = "🚚";
+                typeLabel = "Free Delivery";
+
+               detailLine = `Free delivery on ${productName}`;
+
+            } else if (promotion.type === "quantity_discount") {
+
+                icon = "📦";
+                typeLabel = "Quantity Discount";
+
+                const discountText = promotion.discountValueType === "percentage"
+                    ? `${promotion.discountValue}% off`
+                    : `${formatRWF(promotion.discountValue)} off`;
+
+                detailLine = `Buy ${promotion.minQty}+ units and get ${discountText}`;
+
+            } else {
+
+                icon = "💸";
+                typeLabel = "Discount";
+
+                const discountText = promotion.discountValueType === "percentage"
+                    ? `${promotion.discountValue}% off`
+                    : `${formatRWF(promotion.discountValue)} off`;
+
+                detailLine = `${discountText} on ${productName}`;
+            }
+
+            return `
+                <div class="promo-card">
+                    <div class="promo-icon">${icon}</div>
+                    <div class="promo-body">
+                        <div class="promo-type">${escapeHtml(typeLabel)}</div>
+                        <div class="promo-product">${escapeHtml(productName)}</div>
+                        <div class="promo-detail">${escapeHtml(detailLine)}</div>
+                        ${
+                            promotion.message
+                            ? `<div class="promo-message">${escapeHtml(promotion.message)}</div>`
+                            : ""
+                        }
+                    </div>
+                </div>
+            `;
+
+        }).join("");
+
+    }
+
+    loadPromotions();
+
+</script>
+
+</body>
+</html>

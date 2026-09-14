@@ -2235,6 +2235,8 @@ let settings = {};
 
 let cart = [];
 
+let promotions = [];
+
 let selectedCategory = "all";
 
 
@@ -2481,6 +2483,72 @@ try {
 
     console.log(
         "Using LocalStorage settings as backup."
+    );
+
+}
+/* =========================
+   LOAD PROMOTIONS BACKUP
+========================= */
+
+try{
+
+    promotions =
+        JSON.parse(
+            localStorage.getItem(
+                "vazora_promotions"
+            )
+        ) || [];
+
+}catch(error){
+
+    promotions = [];
+
+}
+
+
+/* =========================
+   LOAD PROMOTIONS FROM FIRESTORE
+========================= */
+
+try{
+
+    const promotionsSnapshot =
+        await getDocs(
+            collection(
+                db,
+                "promotions"
+            )
+        );
+
+    promotions =
+        promotionsSnapshot.docs.map(
+            docSnapshot => ({
+                id: docSnapshot.id,
+                ...docSnapshot.data()
+            })
+        );
+
+    localStorage.setItem(
+        "vazora_promotions",
+        JSON.stringify(
+            promotions
+        )
+    );
+
+    console.log(
+        "VAZORA online promotions:",
+        promotions
+    );
+
+}catch(error){
+
+    console.error(
+        "Firestore promotions error:",
+        error
+    );
+
+    console.log(
+        "Using LocalStorage promotions as backup."
     );
 
 }

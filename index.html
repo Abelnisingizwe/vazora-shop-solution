@@ -4635,10 +4635,10 @@ localStorage.removeItem(
        WHATSAPP URL
     ========================= */
 
-    const whatsappURL =
-    "https://wa.me/" +
+   const whatsappURL =
+    "https://api.whatsapp.com/send?phone=" +
     whatsappNumber +
-    "?text=" +
+    "&text=" +
     encodeURIComponent(message);
         
     /* =========================

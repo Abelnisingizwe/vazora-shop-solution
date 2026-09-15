@@ -4635,69 +4635,67 @@ localStorage.removeItem(
        WHATSAPP URL
     ========================= */
 
-    const whatsappURL =
-    "https://api.whatsapp.com/send?phone=" +
-    whatsappNumber +
-    "&text=" +
-    encodeURIComponent(message);
+    const encodedMsg = encodeURIComponent(message);
+const isAndroid = /Android/i.test(navigator.userAgent);
 
 /* =========================
    OPEN WHATSAPP
 ========================= */
 
-if (/Android/i.test(navigator.userAgent)) {
+if (isAndroid) {
 
-    const whatsappBusinessURL =
-        "intent://send?phone=" +
-        whatsappNumber +
-        "&text=" +
-        encodeURIComponent(message) +
-        "#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end";
+    const businessIntent =
+        `intent://send?phone=${whatsappNumber}&text=${encodedMsg}` +
+        `#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end`;
 
-    const whatsappMessengerURL =
-        "intent://send?phone=" +
-        whatsappNumber +
-        "&text=" +
-        encodeURIComponent(message) +
-        "#Intent;scheme=whatsapp;package=com.whatsapp;end";
+    const messengerIntent =
+        `intent://send?phone=${whatsappNumber}&text=${encodedMsg}` +
+        `#Intent;scheme=whatsapp;package=com.whatsapp;end`;
+
+    const webFallback =
+        `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMsg}`;
 
     let appOpened = false;
 
-    const checkApp = setInterval(function () {
+    const stopFallback = () => {
+        appOpened = true;
+    };
 
-        if (document.hidden) {
-            appOpened = true;
-            clearInterval(checkApp);
-        }
+    document.addEventListener(
+        "visibilitychange",
+        stopFallback,
+        { once: true }
+    );
 
-    }, 100);
+    window.location.href = businessIntent;
 
-    window.location.href = whatsappBusinessURL;
-
-    setTimeout(function () {
-
-        if (appOpened) return;
-
-        window.location.href = whatsappMessengerURL;
-
-    }, 1200);
-
-    setTimeout(function () {
-
-        clearInterval(checkApp);
+    setTimeout(() => {
 
         if (appOpened || document.hidden) return;
 
-        window.location.href = whatsappURL;
+        window.location.href = messengerIntent;
 
-    }, 2400);
+    }, 800);
+
+    setTimeout(() => {
+
+        if (appOpened || document.hidden) return;
+
+        window.location.href = webFallback;
+
+    }, 1800);
 
 } else {
+
+    const whatsappURL =
+        `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMsg}`;
 
     window.open(
         whatsappURL,
         "_blank"
     );
+
+
 
 }
 }

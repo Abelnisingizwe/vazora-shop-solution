@@ -4635,20 +4635,76 @@ localStorage.removeItem(
        WHATSAPP URL
     ========================= */
 
-   const whatsappURL =
-    "https://api.whatsapp.com/send?phone=" +
+   /* =========================
+   WHATSAPP URL
+========================= */
+
+const encodedMessage =
+    encodeURIComponent(message);
+
+
+/* =========================
+   WHATSAPP BUSINESS
+========================= */
+
+const whatsappBusinessURL =
+    "intent://send?phone=" +
     whatsappNumber +
     "&text=" +
-    encodeURIComponent(message);
-        
-    /* =========================
-       OPEN WHATSAPP
-    ========================= */
+    encodedMessage +
+    "#Intent;" +
+    "scheme=whatsapp;" +
+    "package=com.whatsapp.w4b;" +
+    "end";
+
+
+/* =========================
+   UNIVERSAL WHATSAPP URL
+========================= */
+
+const whatsappURL =
+    "https://wa.me/" +
+    whatsappNumber +
+    "?text=" +
+    encodedMessage;
+
+
+/* =========================
+   OPEN WHATSAPP
+========================= */
+
+const isAndroid =
+    /Android/i.test(
+        navigator.userAgent
+    );
+
+
+if(isAndroid){
+
+    window.location.href =
+        whatsappBusinessURL;
+
+
+    setTimeout(
+        function(){
+
+            window.open(
+                whatsappURL,
+                "_blank"
+            );
+
+        },
+        1800
+    );
+
+}else{
 
     window.open(
         whatsappURL,
         "_blank"
     );
+
+}
 }
 /* =========================
    PAYMENT METHOD SELECTION

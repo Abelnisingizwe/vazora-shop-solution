@@ -4634,8 +4634,7 @@ localStorage.removeItem(
     /* =========================
        WHATSAPP URL
     ========================= */
-
-    const encodedMsg = encodeURIComponent(message);
+const encodedMsg = encodeURIComponent(message);
 const isAndroid = /Android/i.test(navigator.userAgent);
 
 /* =========================
@@ -4644,46 +4643,10 @@ const isAndroid = /Android/i.test(navigator.userAgent);
 
 if (isAndroid) {
 
-    const businessIntent =
-        `intent://send?phone=${whatsappNumber}&text=${encodedMsg}` +
-        `#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end`;
-
-    const messengerIntent =
-        `intent://send?phone=${whatsappNumber}&text=${encodedMsg}` +
-        `#Intent;scheme=whatsapp;package=com.whatsapp;end`;
-
-    const webFallback =
+    const whatsappURL =
         `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMsg}`;
 
-    let appOpened = false;
-
-    const stopFallback = () => {
-        appOpened = true;
-    };
-
-    document.addEventListener(
-        "visibilitychange",
-        stopFallback,
-        { once: true }
-    );
-
-    window.location.href = businessIntent;
-
-    setTimeout(() => {
-
-        if (appOpened || document.hidden) return;
-
-        window.location.href = messengerIntent;
-
-    }, 800);
-
-    setTimeout(() => {
-
-        if (appOpened || document.hidden) return;
-
-        window.location.href = webFallback;
-
-    }, 1800);
+    window.location.href = whatsappURL;
 
 } else {
 
@@ -4694,6 +4657,8 @@ if (isAndroid) {
         whatsappURL,
         "_blank"
     );
+
+
 
 
 

@@ -4631,79 +4631,71 @@ localStorage.removeItem(
 }
 
    
-    /* =========================
-       WHATSAPP URL
-    ========================= */
-
-   /* =========================
-   WHATSAPP URL
-========================= */
-
-const encodedMessage =
-    encodeURIComponent(message);
-
-
-/* =========================
-   WHATSAPP BUSINESS
-========================= */
-
-const whatsappBusinessURL =
-    "intent://send?phone=" +
+   const whatsappURL =
+    "https://api.whatsapp.com/send?phone=" +
     whatsappNumber +
     "&text=" +
-    encodedMessage +
-    "#Intent;" +
-    "scheme=whatsapp;" +
-    "package=com.whatsapp.w4b;" +
-    "end";
-
-
-/* =========================
-   UNIVERSAL WHATSAPP URL
-========================= */
-
-const whatsappURL =
-    "https://wa.me/" +
-    whatsappNumber +
-    "?text=" +
-    encodedMessage;
-
+    encodeURIComponent(message);
 
 /* =========================
    OPEN WHATSAPP
 ========================= */
 
-const isAndroid =
-    /Android/i.test(
-        navigator.userAgent
-    );
+if (/Android/i.test(navigator.userAgent)) {
 
+    const whatsappBusinessURL =
+        "intent://send?phone=" +
+        whatsappNumber +
+        "&text=" +
+        encodeURIComponent(message) +
+        "#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end";
 
-if(isAndroid){
+    const whatsappMessengerURL =
+        "intent://send?phone=" +
+        whatsappNumber +
+        "&text=" +
+        encodeURIComponent(message) +
+        "#Intent;scheme=whatsapp;package=com.whatsapp;end";
 
-    window.location.href =
-        whatsappBusinessURL;
+    let appOpened = false;
 
+    const checkApp = setInterval(function () {
 
-    setTimeout(
-        function(){
+        if (document.hidden) {
+            appOpened = true;
+            clearInterval(checkApp);
+        }
 
-            window.open(
-                whatsappURL,
-                "_blank"
-            );
+    }, 100);
 
-        },
-        1800
-    );
+    window.location.href = whatsappBusinessURL;
 
-}else{
+    setTimeout(function () {
+
+        if (appOpened) return;
+
+        window.location.href = whatsappMessengerURL;
+
+    }, 1200);
+
+    setTimeout(function () {
+
+        clearInterval(checkApp);
+
+        if (appOpened || document.hidden) return;
+
+        window.location.href = whatsappURL;
+
+    }, 2400);
+
+} else {
 
     window.open(
         whatsappURL,
         "_blank"
     );
 
+}
 }
 }
 /* =========================

@@ -4649,9 +4649,8 @@ if (isAndroid) {
     window.location.href = whatsappURL;
 
 } else {
-
-    const whatsappURL =
-        `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMsg}`;
+const whatsappURL =
+    `https://wa.me/${whatsappNumber}?text=${encodedMsg}`;
 
     window.open(
         whatsappURL,

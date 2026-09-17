@@ -4643,20 +4643,20 @@ const isAndroid = /Android/i.test(navigator.userAgent);
 
 if (isAndroid) {
 
-    const whatsappURL =
-        `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMsg}`;
+    const whatsappBusinessURL =
+        `intent://send?phone=${whatsappNumber}&text=${encodedMsg}#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end`;
 
-    window.location.href = whatsappURL;
+    window.location.href = whatsappBusinessURL;
 
 } else {
-const whatsappURL =
-    `https://wa.me/${whatsappNumber}?text=${encodedMsg}`;
+
+    const whatsappURL =
+        `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMsg}`;
 
     window.open(
         whatsappURL,
         "_blank"
     );
-
 
 
 

@@ -4644,7 +4644,8 @@ const isAndroid = /Android/i.test(navigator.userAgent);
 if (isAndroid) {
 
     const whatsappBusinessURL =
-        `intent://send?phone=${whatsappNumber}&text=${encodedMsg}#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end`;
+        `intent://send?phone=${whatsappNumber}&text=${encodedMsg}` +
+        `#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end`;
 
     window.location.href = whatsappBusinessURL;
 
@@ -4657,9 +4658,6 @@ if (isAndroid) {
         whatsappURL,
         "_blank"
     );
-
-
-
 
 }
 }

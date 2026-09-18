@@ -4585,7 +4585,7 @@ const order = {
     customerAddress: customerAddress,
     customerNote: customerNote,
     items: orderItems,
-    total: total,
+    total: finalTotal,
     status: "Pending",
     orderMethod: "WhatsApp",
     createdAt: new Date().toISOString()
@@ -4632,33 +4632,97 @@ localStorage.removeItem(
 
    
     /* =========================
-       WHATSAPP URL
-    ========================= */
-const encodedMsg = encodeURIComponent(message);
-const isAndroid = /Android/i.test(navigator.userAgent);
+   WHATSAPP URL
+========================= */
+
+const encodedMsg =
+    encodeURIComponent(message);
+
+const isAndroid =
+    /Android/i.test(navigator.userAgent);
 
 /* =========================
-   OPEN WHATSAPP
+   PREPARE WHATSAPP BUSINESS
+========================= */
+
+let whatsappBusinessURL = "";
+
+if (isAndroid) {
+
+    whatsappBusinessURL =
+        `intent://send?phone=${whatsappNumber}&text=${encodedMsg}` +
+        `#Intent;scheme=whatsapp;package=com.whatsapp.w4b;` +
+        `S.browser_fallback_url=${encodeURIComponent(
+            window.location.href
+        )};end`;
+
+} else {
+
+    whatsappBusinessURL =
+        `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMsg}`;
+
+}
+
+/* =========================
+   OPEN WHATSAPP FIRST
 ========================= */
 
 if (isAndroid) {
 
-    const whatsappBusinessURL =
-        `intent://send?phone=${whatsappNumber}&text=${encodedMsg}` +
-        `#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end`;
-
-    window.location.href = whatsappBusinessURL;
+    window.location.href =
+        whatsappBusinessURL;
 
 } else {
 
-    const whatsappURL =
-        `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMsg}`;
-
     window.open(
-        whatsappURL,
+        whatsappBusinessURL,
         "_blank"
     );
 
+}
+
+/* =========================
+   SAVE ORDER TO FIRESTORE
+========================= */
+
+try {
+
+    await setDoc(
+        doc(db, "orders", order.id),
+        order
+    );
+
+    localStorage.removeItem(
+        "vazora_customer_cart"
+    );
+
+    cart = [];
+
+    updateCartCount();
+
+    renderCart();
+
+    localStorage.removeItem(
+        "vazoraPendingOrder"
+    );
+
+    console.log(
+        "WhatsApp order saved to Firestore:",
+        order.id
+    );
+
+} catch(error) {
+
+    console.error(
+        "WhatsApp order Firestore error:",
+        error
+    );
+
+    showToast(
+        "Order could not be saved online."
+    );
+
+    return;
 }
 }
 /* =========================
